@@ -1,0 +1,56 @@
+<br>
+<div id="progress-bar" *ngIf="!dataLoaded">
+    <p fxLayoutAlign="center">Loading Dashboard...</p>
+    <br>
+    <mat-progress-bar mode="indeterminate" *ngIf="!dataLoaded"></mat-progress-bar>
+</div>
+<h1 fxLayoutAlign="center" *ngIf="dataLoaded">{{campaignName}} Dashboard</h1>
+<br>
+<mat-grid-list #grid rowHeight="3:1">
+  <mat-grid-tile *ngIf="dataLoaded" >
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary"mat-button (click)="enterActivityDashboard('Phonebank')">PHONEBANK</button>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="dataLoaded" >
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary" mat-button (click)="enterActivityDashboard('Canvass')">CANVASS</button>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="dataLoaded" >
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary" mat-button  (click)="enterActivityDashboard('Texting')">TEXTING</button>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="orgLevel === 'ADMINISTRATOR' && dataLoaded">
+    <mat-card fxFlex=80% fxLayout="column">
+      <button fxFlex color="primary" mat-button (click)="enterEventsModule()">EVENTS</button>
+      <!--
+      <mat-form-field fxLayoutAlign="center">
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" disabled>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker disabled="false"></mat-datepicker>
+    </mat-form-field>-->
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="orgLevel === 'ADMINISTRATOR' && dataLoaded">
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary" mat-button (click)="enterTargetingModule()">TARGETING</button>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="(dataManager || dev) && dataLoaded">
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary" mat-button (click)="openOrgsDialog()">CAMPAIGN SETTINGS</button>
+    </mat-card>
+  </mat-grid-tile>
+  <mat-grid-tile *ngIf="orgLevel === 'ADMINISTRATOR' && dataLoaded">
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary" mat-button (click)="getReport()">REPORTS</button>
+    </mat-card>
+  </mat-grid-tile  >
+  <mat-grid-tile *ngIf="dataLoaded">
+    <mat-card fxFlex=80%>
+      <button fxFlex color="primary" mat-button (click)="enterActivityDashboard('Petition')">PLEDGE CARDS</button>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

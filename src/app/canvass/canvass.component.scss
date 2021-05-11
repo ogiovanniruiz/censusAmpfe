@@ -1,0 +1,16 @@
+.mat-expansion-panel-header-description {
+    color: red
+}
+
+#card{
+    width: 80%;
+    opacity: 0;
+}
+
+#card:hover{
+    opacity: 100;
+}
+
+.mat-card{
+    background-color: rgba(0, 0, 0, 0.0);
+}

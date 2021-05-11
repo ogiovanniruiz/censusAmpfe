@@ -1,0 +1,37 @@
+<section fxLayout="column" fxLayoutGap="5%">
+  <h1 fxLayoutAlign="center">Organization Specific Settings and Details</h1>
+<br>
+<mat-expansion-panel *ngIf="dev">
+  <mat-error fxLayoutAlign="center" *ngIf="!accountExists">No Account Exists</mat-error> 
+  <button (click)="createTwilioSubAccount()">Create Twilio Account</button>
+  
+  <mat-error fxLayoutAlign="center" *ngIf="accountExists">Account Active</mat-error> 
+  <button (click)="enableTexting()">Enable Texting</button>
+  <mat-expansion-panel-header><mat-panel-title>Organization Phone Numbers</mat-panel-title></mat-expansion-panel-header>
+  <mat-progress-bar mode="indeterminate" *ngIf="releasingNumber"></mat-progress-bar>
+  <mat-list>
+    <mat-list-item *ngFor="let number of phoneNumbers">
+      <mat-icon matListIcon>group</mat-icon>
+      <button (click)="releasePhoneNumber(number)">Release</button>
+      <h3 matLine> {{number.phoneNumber}}</h3>
+      <p matLine><span>{{number.smsUrl}}</span></p>
+    </mat-list-item>
+  </mat-list>
+  <section *ngIf="accountExists" fxLayoutGap="5%">
+    <button (click)="buyPhoneNumber()">Buy a New Phone Number</button>
+    <mat-form-field>
+      <input matInput #areaCode placeholder="Area Code" maxlength="3">
+    </mat-form-field>
+  </section> 
+  <mat-error fxLayoutAlign="center" *ngIf="needsAreaCode">Area Code Needed</mat-error> 
+
+
+</mat-expansion-panel>
+<mat-error fxLayoutAlign="center" *ngIf="showErrorMsg">{{errorMsg}}</mat-error> 
+<section fxLayoutAlign="center" fxLayout="column" fxLayoutGap="5%">
+    <img width="360" height="119" fxLayoutAlign="center" [src]="image || '/assets/censusie.png'">
+  <input type="file" #file mat-raised-button (change)="fileChanged($event)"> 
+  <button mat-raised-button  color="primary" (click)="upload()">Upload Logo</button> 
+</section>
+
+</section>

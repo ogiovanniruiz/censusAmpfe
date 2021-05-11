@@ -1,0 +1,145 @@
+<section fxLayout="column" >
+<section fxLayout="row" fxLayoutAlign="center" fxLayoutGap="1%"*ngIf="!panelOpenState">
+    <div fxLayout="column" fxLayoutGap="1%" >
+        <h3 fxLayoutAlign="center">{{addressString1}}</h3>
+        <h3 fxLayoutAlign="center">{{addressString2}}</h3>
+    </div>
+</section>
+<mat-progress-bar fxFlexAlign="center" *ngIf="submittingID" mode="indeterminate"></mat-progress-bar>
+<mat-progress-bar fxFlexAlign="center" *ngIf="!addressLoaded" mode="indeterminate"></mat-progress-bar>
+<mat-dialog-content fxLayout="column"  *ngIf="addressLoaded" fxFlex="100%" fxLayoutGap="2%">
+
+  <mat-card *ngIf="!panelOpenState">
+      <h3 fxLayoutAlign="center">Non-Response Codes</h3>
+        <mat-grid-list [cols]="gridColumns || 1" rowHeight="4:1" gutterSize="5">
+          <mat-grid-tile *ngFor="let nonResponse of nonResponses;">
+            <button mat-raised-button fxFlex="100%" color="primary"  [disabled]="submittingID" (click)="nonResponseId(nonResponse, data.parcel)">{{nonResponse}}</button>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <button mat-raised-button fxFlex="100%" color="warn"  [disabled]="submittingID" (click)="nonResponseId('REFUSED', data.parcel)">REFUSED</button>
+          </mat-grid-tile>
+        </mat-grid-list>
+        <mat-error fxFlexAlign="center" *ngIf="showMessage">{{userMessage}}</mat-error>
+        <mat-error *ngIf="connectionError">Could not connect to server. Please wait a few seconds and try again.</mat-error>
+  </mat-card>
+
+  <mat-accordion fxLayout.xs="column" style="min-height:10">
+    <section *ngIf="!panelOpenState">
+    <section *ngFor="let person of houseHold; let i = index">
+      <mat-expansion-panel  style="min-height:5" *ngIf="(person.firstName && person.lastName)">
+        <mat-expansion-panel-header>
+              <mat-panel-title>{{person.firstName}} {{person.middleName}} {{person.lastName}}</mat-panel-title>
+              <div *ngIf="(!person.firstName && !person.lastName) else elseBlock">
+                  <mat-panel-description >No Response</mat-panel-description>
+              </div>
+              <ng-template #elseBlock>
+                  <!--<mat-panel-description *ngIf="idStatus[i].scripts.length < scripts.length" >Incomplete</mat-panel-description>-->
+                  <!--<mat-panel-description *ngIf="idStatus[i].scripts.length >= scripts.length" >Visited</mat-panel-description>-->
+                  <mat-panel-description *ngIf="!idStatus[i].refused && !idStatus[i].identified && !idStatus[i].nonResponse && person.petitionContactHistory.length === 0">Not Canvassed </mat-panel-description>
+                  <mat-panel-description *ngIf="!idStatus[i].refused && !idStatus[i].identified && !idStatus[i].nonResponse && person.petitionContactHistory.length > 0" >Petitioned </mat-panel-description>
+                  <mat-panel-description *ngIf="idStatus[i].refused" >Visted and Refused</mat-panel-description>
+                  <mat-panel-description *ngIf="idStatus[i].identified && !idStatus[i].nonResponse" >Visited and Complete</mat-panel-description>
+                  <mat-panel-description *ngIf="!idStatus[i].refused && idStatus[i].nonResponse" >Visited and No Response</mat-panel-description>
+              </ng-template>
+        </mat-expansion-panel-header>
+            <section fxLayout.xs="column" fxLayout.sm="column" fxLayout="column" style="min-height:5vh" fxLayoutGap="1%" *ngIf='(person.firstName && person.lastName)'>
+                <section *ngFor="let script of scripts; let j = index">
+                  <h2>{{script.title}}</h2>
+                      <section fxLayout="column" fxLayoutGap="2%" *ngIf="!idStatus[i].identified">
+                        <p>{{script.initMessage}}</p>
+                        <mat-accordion  fxLayoutGap="2%">
+                          <mat-expansion-panel *ngFor="let question of script.questions; let k = index;" [ngSwitch]="question.questionType" >
+                            <mat-expansion-panel-header  class="right-aligned-header">
+                              <mat-panel-title>{{k + 1}}</mat-panel-title>
+                              <mat-panel-description>{{question.question}}</mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <section *ngSwitchCase="'RADIO'" >
+                              <mat-radio-group fxLayout="column" fxLayoutGap="2%" [ngModel] #radioAnswers="ngModel" name="{{question.question}}">
+                                <mat-radio-button *ngFor="let responses of question.responses" value="{{responses.response}},{{responses.idType}}">{{responses.response}} <p color="primary">{{responses.idType}}</p></mat-radio-button>
+                              </mat-radio-group>
+                            </section>
+                            <section *ngSwitchCase="'TEXT'" fxLayoutGap="2%">
+                              <mat-form-field fxFlex="100%"> 
+                                <input matInput #textAnswers placeholder="Type your answer here" name="{{question.question}}">
+                              </mat-form-field>
+                          </section>
+                          </mat-expansion-panel>   
+                        </mat-accordion>
+      
+                        <button mat-raised-button color="primary" fxFlexAlign="center" fxFlex="80%" [disabled]="submittingID" (click)="idPerson(person, script)">Submit {{script.title}}</button>
+                      </section>
+                    </section>
+                </section>
+        <button mat-raised-button color="primary" fxFlexAlign="center center" fxFlex="60%" (click)="removePerson(person)" *ngIf='(!person.firstName && !person.lastName)'>Remove Placeholder</button>
+      </mat-expansion-panel>
+    </section>
+  </section>
+
+    <mat-expansion-panel (opened)="panelOpenState = true"
+        (closed)="panelOpenState = false" [expanded]="panelOpenState"> 
+            <mat-expansion-panel-header>
+                <mat-panel-title>Add a new Resident</mat-panel-title>
+              </mat-expansion-panel-header>
+              <ng-template matExpansionPanelContent>
+              <div fxLayout="column">
+                  <div fxLayout="row" fxLayout.sm="column"  fxLayout.xs="column" fxLayoutGap="1%" fxLayoutGap.xs="0%" fxLayoutGap.sm="0%">
+                    <mat-form-field fxFlex="30%"> 
+                      <input matInput #newFirstName placeholder="First Name" required>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="30%"> 
+                        <input matInput #newMiddleName placeholder="Middle Name" >
+                      </mat-form-field>
+                    <mat-form-field fxFlex="30%"> 
+                      <input matInput #newLastName placeholder="Last Name" required>
+                    </mat-form-field>
+                  </div>
+                  <div fxLayout="row" fxLayout.sm="column"  fxLayout.xs="column" fxLayoutGap="1%" fxLayoutGap.xs="0%" fxLayoutGap.sm="0%">
+                      <mat-form-field fxFlex="30%"> 
+                        <input matInput #newPhoneNum placeholder="Phone Number" maxlength="10">
+                      </mat-form-field>
+                      <mat-form-field fxFlex="30%"> 
+                        <input matInput #newEmail placeholder="Email">
+                      </mat-form-field>
+                      <mat-form-field fxFlex="40%">
+                        <mat-label>Future Contact Method</mat-label>
+                        <mat-select [formControl]="preferredMethodOfContact" multiple >
+                          <mat-option value="PHONE">Phone</mat-option>
+                          <mat-option value="TEXT">Text</mat-option>
+                          <mat-option value="EMAIL">Email</mat-option>
+                        </mat-select>
+                      </mat-form-field>                            
+                  </div>
+                
+                  <button mat-button color="primary" [disabled]="submittingID" (click)="createPerson();" fxLayoutAlign="center" fxFlex="100%">ADD RESIDENT</button>
+                  <button mat-button color="accent"  (click)="closeCreatePanel();" fxLayoutAlign="center" fxFlex="100%">CANCEL</button>
+                  <mat-error *ngIf="showNameError" fxLayoutAlign="center">Updating Household requires a First and Last Name</mat-error> 
+                </div>
+              </ng-template>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="!panelOpenState && !unitExists">
+            <mat-expansion-panel-header>
+                <mat-panel-title>Add a Unit #</mat-panel-title>
+              </mat-expansion-panel-header>
+              <ng-template matExpansionPanelContent>
+              <div fxLayout="column">
+                  
+                      <mat-form-field> 
+                        <input matInput #unitNumber placeholder="Unit #">
+                      </mat-form-field>
+                    
+                  <button color="primary" mat-button (click)="addUnitNumber()" >Submit</button>
+              </div>
+          </ng-template>
+        </mat-expansion-panel>
+  </mat-accordion>
+  <button mat-raised-button color="accent" *ngIf="!panelOpenState" (click)="close()">CLOSE</button>
+
+
+  <!--
+  <section *ngIf="personExists" fxLayout="column" fxLayoutGap="2%">
+    <mat-error>A person with this phonenumber or email already exists in the database. Would you like to update their address?</mat-error>
+    <button mat-raised-button color="accent" *ngFor="let person of preExistingPeople" (click)="updatePerson(person)">{{person.firstName}} {{person.lastName}} {{person.emails}} {{person.phones}}</button>
+  </section>
+  -->
+</mat-dialog-content>
+</section>

@@ -1,0 +1,34 @@
+<div fxLayout="column" fxLayoutGap="5%">
+    <h1 fxLayoutAlign="center center">Create a New Parcel</h1>
+
+    <mat-dialog-content fxLayout="column" fxLayoutGap="5%">
+        <section fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="80">
+                <mat-label>Address</mat-label>
+                <input matInput placeholder="Address" required #address>
+            </mat-form-field>
+            <mat-form-field fxFlex="20">
+                <mat-label>Unit</mat-label>
+                <input matInput placeholder="Unit" required #unit>
+            </mat-form-field>
+        </section>
+        <section fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="30">
+                <mat-label>City</mat-label>
+                <input matInput placeholder="City" required #city>
+            </mat-form-field>
+            <mat-form-field fxFlex="30" >
+                <mat-select #county placeholder="County">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let county of counties" [value]="county">{{county}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="30">
+                <mat-label>Zip</mat-label>
+                <input matInput placeholder="Zip" required #zip>
+            </mat-form-field>
+        </section>
+        <mat-error *ngIf="displayMessage">{{userMessage}}</mat-error>
+        <button mat-raised-button color="primary" (click)="saveParcel();">Save</button>
+    </mat-dialog-content>
+</div>

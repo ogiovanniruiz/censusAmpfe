@@ -1,0 +1,26 @@
+<div fxFlex="100%">
+  <div id="progress-bar" *ngIf="targetingLoaded" fxLayout="column" fxLayoutGap="5%">
+    <mat-progress-bar mode="indeterminate" *ngIf="targetingLoaded" fxFlex="80%"></mat-progress-bar>
+    <p fxLayoutAlign="center center">Please wait while the Map loads...</p>
+  </div>
+  <div style="height:calc(100vh - 70px)" leaflet 
+                            [leafletOptions]="options" 
+                            [leafletLayers]="layers"
+                            (leafletMapReady)="onMapReady($event)"
+                            (leafletMapMoveEnd)="mapMoved($event)"
+                            [leafletLayersControl]="layersControl" 
+                            [(leafletCenter)]="center"
+                            [(leafletZoom)]="zoom"                             
+                            leafletDraw
+                            (leafletDrawReady)="onDrawReady($event)"
+                            [leafletDrawOptions]="drawOptions"
+                            (leafletDrawCreated)="drawCreated($event)">
+    <div fxFlex="20%" fxLayoutAlign="center center" fxLayout="column" fxLayoutGap="2%" style="z-index: 1000">
+      <mat-card fxLayoutAlign="center center" fxLayout="column" fxLayoutGap="5%"> 
+        <button mat-icon-button matTooltip="Filter Assets" (click)="filterAssets()"><mat-icon>search</mat-icon></button>
+        <button mat-icon-button matTooltip="Create Non-Geographic Target" (click)="createNonGeographicTarget()"><mat-icon>assignment</mat-icon></button>
+        <button mat-icon-button matTooltip="Target Summary" (click)="openTargetSummary()"><mat-icon>insert_chart</mat-icon></button>
+    </mat-card>
+    </div>
+  </div>
+</div>

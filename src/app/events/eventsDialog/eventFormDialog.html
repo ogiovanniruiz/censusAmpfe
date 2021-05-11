@@ -1,0 +1,285 @@
+<section fxLayout="column" fxLayoutGap="1%" *ngIf="loading">
+    <mat-progress-bar mode="indeterminate" fxFlex="2px" *ngIf="!errors"></mat-progress-bar>
+    <p fxLayoutAlign="center center" style="padding-top:7px;" *ngIf="!errors"s>Please wait while completing...</p>
+    <p fxLayoutAlign="center center" style="padding-top:7px;" *ngIf="errors">There was an error. Please try again or contact support.</p>
+</section>
+<section fxLayout="column" fxLayoutGap="1%"  *ngIf="!loading">
+    <h1 fxLayoutAlign="center center">Event Report Form</h1>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Prefilled Event Data</mat-panel-title>
+                <mat-panel-description>Prefilled Event Data</mat-panel-description>
+            </mat-expansion-panel-header>
+            <p>Reporter Name: {{userName}}</p>
+            <p>CBO Name: {{cboName}}</p>
+            <p>Parent Organization: {{parentOrg}}</p>
+            <!--<p>Activity Type: {{activityType}}</p>-->
+            <p>Activity Date: {{dateStart}}</p> 
+            <p>Latitude: {{lat}} Longitude: {{lng}}</p> 
+            <p>Address 1: {{address}} {{address2}}</p>        
+            <p>Start Time: {{startTime}} End Time: {{endTime}}</p> 
+            <p>Event Name: {{eventName}}</p>
+        </mat-expansion-panel> 
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Activity Details</mat-panel-title>
+            </mat-expansion-panel-header>
+            
+                <section fxLayout="row" fxLayoutGap="5%">
+                    <section fxLayout="column">
+                        <mat-form-field>
+                            <input matInput placeholder="What went well?" #whatWentWell>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="What could be improved" #improve>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Audience Questions and Concerns" #concerns>
+                        </mat-form-field>
+                        <mat-form-field >
+                            <input min="0" max="9999" type="number" matInput placeholder="Number of paid staff/volunteers" #numVolunteers value="0">
+                        </mat-form-field>
+                        <mat-label style="margin-top: -13px;font-size: 11px;color: blue;">This should be an integer, not a decimal.</mat-label>
+                        <mat-form-field>
+                            <mat-label >Activity Type</mat-label>
+                            <mat-select [(value)]="selectedActivityType" >
+                                <mat-option value="Event">Event</mat-option>
+                                <mat-option value="social_media">Social Media</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </section>
+                    <section fxLayout="column">
+                        <mat-form-field>
+                            <input matInput placeholder="Additional Notes" #notes>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Description" #description>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input min="0" max="9999" type="number" value="0" matInput placeholder="Total Number of Impressions" #impressions>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label [style.color]="!impressConf ? 'red' : ''">Impression Confidence</mat-label>
+                            <mat-select [(value)]="impressConf" (selectionChange)="completeEventCheck()">
+                                <mat-option value="exact">Exact</mat-option>
+                                <mat-option value="very_high">Very High</mat-option>
+                                <mat-option value="high">High</mat-option>
+                                <mat-option value="medium">Medium</mat-option>
+                                <mat-option value="low">Low</mat-option>
+                                <mat-option value="very_low">Very Low</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        <span *ngIf="!impressConf" style="margin-top: -13px;font-size: 11px;color: red;">This field is required</span>
+                        <mat-form-field>
+                            <input matInput placeholder="Radius" #radius>
+                        </mat-form-field>
+                    </section>
+                </section>
+            
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Languages
+              </mat-panel-title>
+              <mat-panel-description>
+                Enter Number of Impressions per Language
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+                <section fxLayoutGap="1%" fxLayout="column">
+                    <section>
+                    <mat-form-field>
+                        <mat-label>Select a Language to Add</mat-label>
+                        <mat-select>
+                            <mat-option *ngFor="let language of languages" (click)="addLanguage(language)">{{language}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    </section>
+                    <section>
+                        <div *ngFor="let language of loadedLanguages">
+                            <mat-form-field >
+                                <input min="0" max="100" type="number" matInput placeholder="{{language}}" #languageAnswers value="0">
+                            </mat-form-field>
+                            <button mat-icon-button (click)="removeLanguage(language)"><mat-icon>clear</mat-icon></button>
+                        </div>
+                    </section>
+                </section>
+                <section fxLayoutGap="5%" fxLayout="row">
+                        <mat-form-field>
+                            <mat-label>Language Breakdown Confidence</mat-label>
+                            <mat-select [(value)]="langBreakConf">
+                                <mat-option value="exact">Exact</mat-option>
+                                <mat-option value="very_high">Very High</mat-option>
+                                <mat-option value="high">High</mat-option>
+                                <mat-option value="medium">Medium</mat-option>
+                                <mat-option value="low">Low</mat-option>
+                                <mat-option value="very_low">Very Low</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Other Language Info" #otherLangInfo>
+                        </mat-form-field>
+                </section>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                HTC Groups
+              </mat-panel-title>
+              <mat-panel-description>
+                Enter Number of Impressions per HTC Group
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            
+            <section fxLayoutGap="5%" fxLayout="row">
+                <section fxLayoutGap="1%" fxLayout="column" fxFlex="50%">
+                    <mat-form-field>
+                        <mat-label>Select a HTC Group to Add</mat-label>
+                        <mat-select>
+                            <mat-option *ngFor="let group of htcGroups" (click)="addHTCGroup(group)">{{group}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </section>
+                <section>
+                    <div *ngFor="let group of loadedHTCGroups">
+                        <mat-form-field >
+                            <input min="0" max="9999" type="number" matInput placeholder="{{group}}" #htcGroupAnswers value="0">
+                        </mat-form-field>
+                        <button mat-icon-button (click)="removeHTCGroup(group)"><mat-icon>clear</mat-icon></button>
+                    </div> 
+                </section>
+            </section>
+            <mat-divider></mat-divider>
+
+            <section fxLayoutGap="5%" fxLayout="row">
+                <section fxLayout="column">
+                    <mat-form-field>
+                        <input min="0" max="9999" type="number" value="0" matInput placeholder="Total Number of HTC Impressions" #numHTCImpress>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label [style.color]="!htcDataConf ? 'red' : ''">HTC Data Confidence</mat-label>
+                        <mat-select [(value)]="htcDataConf" (selectionChange)="completeEventCheck()">
+                            <mat-option value="exact">Exact</mat-option>
+                            <mat-option value="very_high">Very High</mat-option>
+                            <mat-option value="high">High</mat-option>
+                            <mat-option value="medium">Medium</mat-option>
+                            <mat-option value="low">Low</mat-option>
+                            <mat-option value="very_low">Very Low</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <span *ngIf="!htcDataConf" style="margin-top: -13px;font-size: 11px;color: red;">This field is required</span>
+                </section>
+                <section fxLayout="column">
+                    <mat-form-field>
+                        <mat-label [style.color]="!htcConf ? 'red' : ''"># HTC Confidence</mat-label>
+                        <mat-select [(value)]="htcConf" (selectionChange)="completeEventCheck()">
+                            <mat-option value="exact">Exact</mat-option>
+                            <mat-option value="very_high">Very High</mat-option>
+                            <mat-option value="high">High</mat-option>
+                            <mat-option value="medium">Medium</mat-option>
+                            <mat-option value="low">Low</mat-option>
+                            <mat-option value="very_low">Very Low</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <span *ngIf="!htcConf" style="margin-top: -13px;font-size: 11px;color: red;">This field is required</span>
+
+                    <mat-form-field>
+                        <input matInput placeholder="HTC Breakdown Methodology" #htcMethod>
+                    </mat-form-field>
+                </section>
+            </section>
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Extra Details
+              </mat-panel-title>
+              <mat-panel-description>
+                Extra Details
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+           
+                <section fxLayout="row" fxLayoutGap="5%">
+                    <section fxLayout="column">
+                        <mat-form-field>
+                            <mat-label>Funding Source</mat-label>
+                            <mat-select [(value)]="funding">
+                                <mat-option value="funding_state_allocated">State</mat-option>
+                                <mat-option value="funding_county_direct">County</mat-option>
+                                <mat-option value="funding_acbo_direct">ACBO</mat-option>
+                                <mat-option value="funding_foundation">Foundation</mat-option>
+                                <mat-option value="funding_private">Private</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Activity Website" #website>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Facebook Link" #facebook>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Venue Rating</mat-label>
+                            <mat-select [(value)]="venueRating">
+                                <mat-option value="5">5</mat-option>
+                                <mat-option value="4">4</mat-option>
+                                <mat-option value="3">3</mat-option>
+                                <mat-option value="2">2</mat-option>
+                                <mat-option value="1">1</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Participant Engagement</mat-label>
+                            <mat-select [(value)]="participEngage">
+                                <mat-option value="5">5</mat-option>
+                                <mat-option value="4">4</mat-option>
+                                <mat-option value="3">3</mat-option>
+                                <mat-option value="2">2</mat-option>
+                                <mat-option value="1">1</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </section> 
+                    <section fxLayout="column">
+                        <mat-form-field >
+                            <input min="0" max="9999" type="number" matInput placeholder="Volunteer Hours" #volunteerHours value="0">
+                        </mat-form-field>
+                        <mat-label style="margin-top: -13px;font-size: 11px;color: blue;">This should be an integer, not a decimal.</mat-label>
+                        <mat-form-field>
+                            <input matInput placeholder="Youtube Link" #youtube>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input matInput placeholder="Social Media Channel" #socialMedia>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Interaction Quality</mat-label>
+                            <mat-select [(value)]="interactQuality">
+                                <mat-option value="5">5</mat-option>
+                                <mat-option value="4">4</mat-option>
+                                <mat-option value="3">3</mat-option>
+                                <mat-option value="2">2</mat-option>
+                                <mat-option value="1">1</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Overall Effectiveness</mat-label>
+                            <mat-select [(value)]="effectiveness">
+                                <mat-option value="5">5</mat-option>
+                                <mat-option value="4">4</mat-option>
+                                <mat-option value="3">3</mat-option>
+                                <mat-option value="2">2</mat-option>
+                                <mat-option value="1">1</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </section>
+                </section> 
+          
+        </mat-expansion-panel>
+    </mat-accordion>
+    <button mat-raised-button color="primary"  (click)="editEvent()">Save</button>
+    <button mat-raised-button color="warn" *ngIf="mode === 'COMPLETE'" (click)="completeEvent()">Submit</button>
+    <button mat-raised-button color="accent" (click)="closeDialog()">Cancel</button>
+</section>

@@ -1,0 +1,8 @@
+<p fxLayoutAlign="center">Addresses are stacked.</p>
+<p fxLayoutAlign="center"> Which would you like to deal with?</p>
+<mat-dialog-content fxLayoutAlign="center" fxLayout="column">
+  <mat-button-toggle-group name="fontStyle" aria-label="Font Style" #group="matButtonToggleGroup" vertical>
+    <mat-button-toggle *ngFor='let person of people' value="{{person.data._id}}">{{person.stringAddress}}</mat-button-toggle>
+  </mat-button-toggle-group>
+  <button mat-raised-button color="primary" (click)="continue()">Continue</button>
+</mat-dialog-content>

@@ -1,0 +1,22 @@
+<mat-card fxLayout="column" fxLayoutGap="5%">
+  <p fxLayoutAlign="center">{{data.properties.asset.idResponses[0].responses}}</p>
+  <section fxLayout="column" fxLayoutGap="2%">
+    <h4 fxLayoutAlign="center">{{data.properties.address.streetNum}} {{data.properties.address.street}} {{data.properties.address.suffix}}</h4>
+    <h4 fxLayoutAlign="center">{{data.properties.address.city}} {{data.properties.address.state}} {{data.properties.address.zip}}</h4>
+  </section> 
+    <section fxLayout="column" fxLayoutGap="5%">
+      <mat-form-field>
+        <input matInput placeholder="Event Name" #eventName>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" disabled>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker disabled="false"></mat-datepicker>
+      </mat-form-field>
+      <p>Choose a Time Range</p>
+      <ng5-slider [value]="9" [highValue]="17" [options]="options" #time ></ng5-slider>
+      <br>
+      <button mat-raised-button color="primary" (click)="createEvent()">REGISTER EVENT</button>
+      <mat-error fxLayoutAlign="center" *ngIf="displayMessage">{{userMessage}}</mat-error>
+    </section>
+</mat-card>

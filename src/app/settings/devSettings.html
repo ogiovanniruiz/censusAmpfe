@@ -1,0 +1,25 @@
+
+<h2 mat-dialog-title fxLayoutAlign="center">Developer Permissions</h2>
+<mat-dialog-content>
+    <mat-paginator #paginator [pageSize]="pageSize"  [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)"></mat-paginator>
+    <table matSort (matSortChange)="sortData($event)">
+        <tr>
+          <th mat-sort-header="firstName">First Name</th>
+          <th mat-sort-header="lastName">Last Name</th>
+          <th mat-sort-header="email">Email </th>
+          <th mat-sort-header="permission">Developer </th>
+        </tr>
+    
+        <tr *ngFor="let user of sortedUsers">
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+            <td>{{user.user.loginEmail}}</td>
+            <td><mat-slide-toggle checked="{{user.user.dev}}" (click)="updateDevStatus(user.user, !developer.checked);" #developer></mat-slide-toggle></td>
+            <td> <button mat-button color="accent" (click)="deleteUser(user)">DESTROY</button> </td>
+            <mat-divider></mat-divider>
+        </tr>
+    </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" *ngIf="!editingLvl" (click)="closeSettings();">CLOSE</button>
+</mat-dialog-actions>

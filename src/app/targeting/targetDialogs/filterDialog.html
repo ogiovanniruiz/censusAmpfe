@@ -1,0 +1,23 @@
+<body fxLayout="column" fxLayoutGap="5%">
+    <!--
+<section *ngFor="let question of script;" [ngSwitch]="question.question">
+  <mat-form-field *ngSwitchCase="'Language Capacity'">
+    <mat-label>Language Capacity</mat-label>
+    <mat-select multiple #languageCapacity>
+      <mat-option *ngFor="let responses of question.responses" [value]="responses.response">{{responses.response}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngSwitchCase="'Location Type'">
+    <mat-label>Location Type</mat-label>
+    <mat-select multiple #locationType>
+      <mat-option *ngFor="let responses of question.responses" [value]="responses.response">{{responses.response}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</section> -->
+<mat-progress-bar mode="indeterminate" *ngIf="tractsloading"></mat-progress-bar>
+<mat-form-field>
+  <input matInput #blockgroup placeholder="Blockgroup Number">
+</mat-form-field>
+<button mat-raised-button color="primary" [disabled]="tractsloading" (click)="centerBlockGroup(blockgroup)">Filter</button>
+<mat-error *ngIf="notFound"> Blockgroup not found.</mat-error>
+</body>

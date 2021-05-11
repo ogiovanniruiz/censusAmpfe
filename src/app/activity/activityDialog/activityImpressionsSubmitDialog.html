@@ -1,0 +1,11 @@
+<h2 mat-dialog-title fxLayoutAlign="center">Submit Impressions</h2>
+<section fxLayout="column" fxLayoutGap="1%" *ngIf="loading">
+    <mat-progress-bar mode="indeterminate" fxFlex="2px" *ngIf="!errors"></mat-progress-bar>
+    <p fxLayoutAlign="center center" style="padding-top:7px;" *ngIf="!errors"s>Please wait while completing...</p>
+    <p fxLayoutAlign="center center" style="padding-top:7px;" *ngIf="errors">There was an error. Please try again or contact support.</p>
+</section>
+
+<mat-dialog-actions align="end" [style.display]="!loading ? 'flex' : 'none'">
+    <button mat-raised-button color="accent" [disabled]="loadingPledgeCards" (click)="close()" fxFlexAlign="center">CLOSE</button>
+    <button mat-raised-button color="accent" [disabled]="loadingPledgeCards" (click)="completeActivity()" *ngIf="mode === 'EDIT'" style="float: right;" >SUBMIT TO SWORD</button>
+</mat-dialog-actions>

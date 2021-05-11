@@ -1,0 +1,21 @@
+<h2 mat-dialog-title fxLayoutAlign="center">Script Details</h2>
+<mat-dialog-content>
+    <mat-select placeholder="Select script" fxLayout="column" fxLayoutGap="20px" style="min-height:5vh">
+        <mat-option *ngFor="let script of scripts" (click)="selectScript(script)" [value]="script.title">{{script.title}}</mat-option>
+    </mat-select>
+    <table matSort *ngIf="script.length">
+        <tr>
+            <th>Title</th>
+            <th *ngFor="let scriptCol of script">{{scriptCol.label}}</th>
+        </tr>
+
+        <tr>
+            <td>{{title}}</td>
+            <td *ngFor="let scriptCol of script">{{scriptCol.name}}</td>
+            <mat-divider></mat-divider>
+        </tr>
+    </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" (click)="closeSettings();">CLOSE</button>
+</mat-dialog-actions>

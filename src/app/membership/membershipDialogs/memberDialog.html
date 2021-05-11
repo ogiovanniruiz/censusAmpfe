@@ -1,0 +1,151 @@
+<mat-card fxLayout="column" fxLayoutAlign="center">
+    <div fxLayout="column" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="2%">
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%">
+          <mat-form-field fxFlex="33%" > 
+            <input matInput #firstName type="name" placeholder="First Name" required>
+          </mat-form-field>
+          <mat-form-field fxFlex="33%"> 
+              <input matInput #middleName type="name" placeholder="Middle Name" required>
+          </mat-form-field>
+          <mat-form-field fxFlex="33%"> 
+            <input matInput #lastName type="name" placeholder="Last Name" required>
+          </mat-form-field>          
+        </div>
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%">
+          <mat-form-field fxFlex="30%"> 
+            <input matInput #phone type="tel" placeholder="Phone Number" maxlength="10">
+          </mat-form-field>
+          <mat-form-field fxFlex="30%"> 
+            <input matInput #email type="email" placeholder="Email" required>
+          </mat-form-field>
+          <mat-form-field fxFlex="20%"> 
+            <input matInput #dob type="text" placeholder="DOB">
+          </mat-form-field>
+          <mat-form-field fxFlex="10%">
+            <mat-label>Gender</mat-label>
+            <mat-select #gender>
+              <mat-option value="M">Male</mat-option>
+              <mat-option value="F">Female</mat-option>
+              <mat-option value="O">Other</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field fxFlex="10%"> 
+            <input matInput #party type="text" placeholder="Party">
+          </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%">
+          <mat-form-field fxFlex="15%"> 
+            <input matInput #streetNum type="text" placeholder="Street #">
+          </mat-form-field>
+          <mat-form-field fxFlex="15%"> 
+            <input matInput #prefix type="text" placeholder="E, W, N">
+          </mat-form-field>
+          <mat-form-field fxFlex="40%"> 
+            <input matInput #street type="text" placeholder="Street Name">
+          </mat-form-field>
+          <mat-form-field fxFlex="15%"> 
+            <input matInput #suffix type="text" placeholder="St, Rd">
+          </mat-form-field>
+          <mat-form-field fxFlex="15%"> 
+            <input matInput #unit type="text" placeholder="Unit">
+          </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="2%">
+          <mat-form-field fxFlex="30%"> 
+            <input matInput #city type="text" placeholder="City">
+          </mat-form-field>
+          <mat-form-field fxFlex="30%"> 
+            <mat-select #county placeholder="County">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let county of counties" [value]="county">{{county}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field fxFlex="10%"> 
+            <mat-select #state placeholder="State">
+              <mat-option>None</mat-option>
+              <mat-option *ngFor="let state of states" [value]="state">{{state}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field fxFlex="30%"> 
+            <input matInput #zip type="text" placeholder="Zip">
+          </mat-form-field>
+        </div>
+        <div>
+        <mat-form-field fxFlex="30%">
+            <mat-label>Tags</mat-label>
+            <mat-select [(formControl)]="selectedTags" multiple>
+              <mat-option [value]="tag" *ngFor="let tag of tags">{{tag}}</mat-option>
+            </mat-select>
+
+        </mat-form-field>
+        <p *ngIf="data.mode === 'EDIT'">Coordinates: {{data.person.address.location.coordinates[1]}} {{data.person.address.location.coordinates[0]}}</p> 
+        </div>
+        <mat-error *ngIf="personExists">This person already exists in the Database. Try searching for the them in the Contact List.</mat-error>
+        <div *ngIf="data.mode === 'EDIT'">
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><mat-panel-title>Phonebank Contact History</mat-panel-title></mat-expansion-panel-header>
+              <div *ngFor="let pbhistory of phonebankContactHistory">
+                ActivityID: {{pbhistory.activityID}}
+                <div *ngFor="let idHistory of pbhistory.idHistory">
+                  ScriptID: {{idHistory.scriptID}}
+                  <div *ngFor="let idResponse of idHistory.idResponses">
+                    Question: {{idResponse.question}}
+                    Response: {{idResponse.responses}}
+                    Response Type: {{idResponse.idType}}
+                  </div>
+                </div> 
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><mat-panel-title>Canvass Contact History</mat-panel-title></mat-expansion-panel-header>
+              <div *ngFor="let chistory of canvassContactHistory">
+                  ActivityID: {{chistory.activityID}}
+                  <div *ngFor="let idHistory of chistory.idHistory">
+                    ScriptID: {{idHistory.scriptID}}
+                    <div *ngFor="let idResponse of idHistory.idResponses">
+                      Question: {{idResponse.question}}
+                      Response: {{idResponse.responses}}
+                      Response Type: {{idResponse.idType}}
+                    </div>
+                  </div> 
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><mat-panel-title>Texting Contact History</mat-panel-title></mat-expansion-panel-header>
+              <div *ngFor="let thistory of textContactHistory">
+                  ActivityID: {{thistory.activityID}}
+                  <div *ngFor="let idHistory of thistory.idHistory">
+                    ScriptID: {{idHistory.scriptID}}
+                    <div *ngFor="let idResponse of idHistory.idResponses">
+                      Question: {{idResponse.question}}
+                      Response: {{idResponse.responses}}
+                      Response Type: {{idResponse.idType}}
+                    </div>
+                  </div> 
+                </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header><mat-panel-title>Peitition Contact History</mat-panel-title></mat-expansion-panel-header>
+              <div *ngFor="let phistory of petitionContactHistory">
+                  ActivityID: {{phistory.activityID}}
+                  <div *ngFor="let idHistory of phistory.idHistory">
+                    ScriptID: {{idHistory.scriptID}}
+                    <div *ngFor="let idResponse of idHistory.idResponses">
+                      Question: {{idResponse.question}}
+                      Response: {{idResponse.responses}}
+                      Response Type: {{idResponse.idType}}
+                    </div>
+                  </div> 
+                </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+
+        </div>
+        <div fxLayoutAlign="center" fxLayout="row" fxLayoutGap="5%">
+          <button mat-raised-button color="accent" (click)="cancel()">CANCEL</button>
+          <button mat-raised-button  color="primary" (click)="savePerson(firstName.value, middleName.value, lastName.value, phone.value, email.value, streetNum.value, prefix.value, street.value,  suffix.value, unit.value, city.value, county.value, state.value, zip.value, dob.value, gender.value, party.value)">SAVE</button>
+        </div>
+    </div>
+    <br/>
+</mat-card>

@@ -1,0 +1,12 @@
+<mat-card fxLayout="column">
+    <mat-card-title fxLayoutAlign="center">Edit Organization</mat-card-title>
+    <mat-form-field>
+        <input matInput #editOrgName placeholder="Organization Name">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput #editOrgDescription placeholder="Description">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="editOrganization()">SUBMIT</button>
+    <br>
+    <button mat-raised-button color="accent" (click)="return();">RETURN</button>
+</mat-card>

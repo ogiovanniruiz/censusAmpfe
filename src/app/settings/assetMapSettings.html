@@ -1,0 +1,37 @@
+<h2 mat-dialog-title fxLayoutAlign="center">Asset Map Permissions</h2>
+<mat-dialog-content>
+    <mat-paginator #paginator [pageSize]="pageSize"  [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)"></mat-paginator>
+        <table matSort (matSortChange)="sortData($event)">
+            <tr>
+              <th mat-sort-header="firstName">First Name</th>
+              <th mat-sort-header="lastName">Last Name</th>
+              <th mat-sort-header="permission">Permission </th>
+            </tr>
+        
+            <tr *ngFor="let user of sortedUsers">
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+                <td>
+                    <button mat-button color="primary" [matMenuTriggerFor]="menu" [disabled]="user.user.assetMapLvl === 'ADMINISTRATOR' && !isDev">{{user.user.assetMapLvl}}</button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="updateAssetMapLvl(user, 'ADMINISTRATOR')" *ngIf="isDev">
+                            <mat-icon>account_circle</mat-icon>
+                            <span>Admin</span>
+                        </button>
+                        <button mat-menu-item (click)="updateAssetMapLvl(user, 'VOLUNTEER')">
+                            <mat-icon>how_to_reg</mat-icon>
+                            <span>Volunteer</span>
+                        </button>
+                        <button mat-menu-item (click)="updateAssetMapLvl(user, 'TRIAL');">
+                            <mat-icon>person</mat-icon>
+                            <span>Trial</span>
+                        </button>
+                    </mat-menu>
+                </td>
+                <mat-divider></mat-divider>
+            </tr>
+        </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" *ngIf="!editingLvl" (click)="closeSettings();">CLOSE</button>
+</mat-dialog-actions>

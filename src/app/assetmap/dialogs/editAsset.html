@@ -1,0 +1,211 @@
+<div fxLayout="column" fxLayoutGap="5%">
+    <h1 fxLayoutAlign="center center">Admin Asset Editor</h1>
+    <h3 fxLayoutAlign="center center">{{address1}}</h3>
+    <h3 fxLayoutAlign="center center">{{address2}}</h3>
+    <mat-card fxLayout="column" fxLayoutGap="5%" *ngIf="mode === ''">
+        <button mat-raised-button color="primary" (click)="editAsset();">Edit Asset</button>
+        <button mat-raised-button color="accent" (click)="modifyAddress();">Modify Address</button>
+        <button mat-button color="warn" (click)="deleteAsset();">Delete Asset</button> 
+    </mat-card>
+    <mat-accordion *ngIf="mode === 'EDITASSET'">
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>1</mat-panel-title>
+                <mat-panel-description>Location Name</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field fxFlex="100%">
+                <mat-label>Location Name</mat-label>
+                <input matInput placeholder="Location Name" #locationName>
+            </mat-form-field>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>2</mat-panel-title>
+                <mat-panel-description>Services Provided</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field fxFlex="100%">
+                <mat-label>Services Provided</mat-label>
+                <input matInput placeholder="Services Provided" #servicesProvided>
+            </mat-form-field>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>3</mat-panel-title>
+                <mat-panel-description>Age Groups Served</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <mat-label>Age Groups Served</mat-label>
+                <mat-select multiple [(ngModel)]="ageGroupsSelected" placeholder="Age Groups Served" #ageGroupsFinal>
+                    <mat-option value="0-17">0-17</mat-option>
+                    <mat-option value="18-35">18-35</mat-option>
+                    <mat-option value="36-54">36-54</mat-option>
+                    <mat-option value="55">55+</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>4</mat-panel-title>
+                <mat-panel-description>ADA Accessible</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-radio-group fxLayout="column" fxLayoutGap="5%" [(ngModel)]=adaSelected name="ADA Accessible" #adaFinal>
+                <mat-radio-button value="Yes">Yes</mat-radio-button>
+                <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>5</mat-panel-title>
+                <mat-panel-description>Wifi Available</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-radio-group fxLayout="column" fxLayoutGap="5%" [(ngModel)]=wifi name="Wifi">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>
+                <mat-radio-button value="No">No</mat-radio-button>
+            </mat-radio-group>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>6</mat-panel-title>
+                <mat-panel-description>Parking Type</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-radio-group fxLayout="column" fxLayoutGap="5%" [(ngModel)]=parking name="Parking Type">
+                <mat-radio-button value="Public">Public</mat-radio-button>
+                <mat-radio-button value="Private">Private</mat-radio-button>
+                <mat-radio-button value="Both">Both</mat-radio-button>
+            </mat-radio-group>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>7</mat-panel-title>
+                <mat-panel-description>Racial/Ethinic Group Served</mat-panel-description>
+            </mat-expansion-panel-header>
+            <section fxLayout="column" fxLayoutGap="5%">
+                <mat-form-field>
+                    <mat-label>Racial/Ethinic Group Served</mat-label>
+                    <mat-select multiple [(ngModel)]="groupServed" placeholder="Racial/Ethinic Group Served">
+                        <mat-option *ngFor="let response of this.script[6].responses" [value]="response.response" (click)="multiSelected(response)">{{response.response}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <section *ngFor="let responses of multiSelection; let j = index;" fxLayoutGap="5%" fxLayout="row">
+                    <section *ngIf="responses.hasChildren; else noChildren">
+                        <mat-form-field>
+                            <mat-label>{{responses.response}}</mat-label>
+                            <mat-select multiple [ngModel]="[]" #subGroupServed placeholder="{{responses.response}}">                                
+                                <mat-option *ngFor="let child of responses.children" [value]="child">{{child}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </section>
+                    <ng-template #noChildren>
+                        <mat-form-field style="display: none" >
+                            <mat-label >{{responses.response}}</mat-label>
+                            <mat-select #subGroupServed placeholder="{{responses.response}}" [value]="responses.response"></mat-select>
+                        </mat-form-field>
+                    </ng-template>
+                </section>
+                <mat-error *ngIf="ethnicGroupError">Please complete the Ethnic Group Form.</mat-error>
+            </section>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>8</mat-panel-title>
+                <mat-panel-description>Language Capacity</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <mat-label>Language Capacity</mat-label>
+                <mat-select multiple [(ngModel)]="languageCapacity" placeholder="Language Capacity">
+                    <mat-option value="Arabic">Arabic</mat-option>
+                    <mat-option value="Chinese">Chinese</mat-option>
+                    <mat-option value="English">English</mat-option>
+                    <mat-option value="Korean">Korean</mat-option>
+                    <mat-option value="Spanish">Spanish</mat-option>
+                    <mat-option value="Tagalog">Tagalog</mat-option>
+                    <mat-option value="Vietnamese">Vietnamese</mat-option>
+                    <mat-option value="Other">Other</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>9</mat-panel-title>
+                <mat-panel-description>Hours of Operation</mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-form-field>
+                <mat-label>Hours of Operation</mat-label>
+                <mat-select multiple [(ngModel)]="daysOfOp" placeholder="Hours of Operation">
+                    <mat-option *ngFor="let responses of this.script[8].responses" [value]="responses.response" (click)="multiSelectedTime(responses.response)">{{responses.response}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <section *ngFor="let responses of multiSelectionTime">
+                {{responses.day}}
+                <ng5-slider [value]="9" [highValue]="17" [options]="options" #hoursOfOpFinal id="{{responses.day}}" [manualRefresh]="manualRefresh"></ng5-slider>
+            </section>
+        </mat-expansion-panel>
+
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header  class="right-aligned-header">
+                <mat-panel-title>10</mat-panel-title>
+                <mat-panel-description>Location Type</mat-panel-description>
+            </mat-expansion-panel-header>
+            <section fxLayout="row" fxLayoutGap="5%">
+                <mat-form-field>
+                    <mat-label>Location Type</mat-label>
+                    <mat-select [(ngModel)]="locationType" placeholder="Location Type">
+                        <mat-option *ngFor="let response of this.script[9].responses" [value]="response.response" (click)="singleSelected(response)">{{response.response}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <section *ngIf="singleSelection">
+                    <mat-radio-group fxLayout="column" fxLayoutGap="5%" name="singleSelection.response" [(ngModel)]="locationSubType">
+                        <mat-radio-button *ngFor="let child of singleSelection.children" [value]="child" [checked]="locationSubType === child" name="child">{{child}}</mat-radio-button>
+                    </mat-radio-group>
+                </section>
+            </section>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+                <mat-expansion-panel-header  class="right-aligned-header">
+                    <mat-panel-title>11</mat-panel-title>
+                    <mat-panel-description>General Comments</mat-panel-description>
+                </mat-expansion-panel-header>
+                <mat-form-field fxFlex="100%">
+                    <mat-label>General Comments</mat-label>
+                    <textarea matInput placeholder="General Comments" #generalComments></textarea>
+                </mat-form-field>
+            </mat-expansion-panel>
+    </mat-accordion>
+    <mat-dialog-content *ngIf="mode === 'EDITPARCEL'" fxLayout="column" fxLayoutGap="5%">
+        <section fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="30">
+                <mat-label>Address Number</mat-label>
+                <input matInput placeholder="Address Number" required #streetNum>
+            </mat-form-field>
+            <mat-form-field fxFlex="50">
+                <mat-label>Street Name</mat-label>
+                <input matInput placeholder="Street Name" required #street>
+            </mat-form-field>
+            <mat-form-field fxFlex="10">
+                <mat-label>Suffix</mat-label>
+                <input matInput placeholder="Suffix" #suffix>
+            </mat-form-field>
+        </section>
+        <section fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="30">
+                <mat-label>City</mat-label>
+                <input matInput placeholder="City" required #city>
+            </mat-form-field>
+            <mat-form-field fxFlex="30" >
+                <mat-select #county placeholder="County">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let county of counties" [value]="county">{{county}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="30">
+                <mat-label>Zip</mat-label>
+                <input matInput placeholder="Zip" required #zip>
+            </mat-form-field>
+        </section>
+        <mat-error *ngIf="displayMessage">{{userMessage}}</mat-error>
+        <button mat-raised-button color="primary" (click)="saveParcel();">Save</button>
+    </mat-dialog-content>
+    <button mat-raised-button color="primary" *ngIf="mode === 'EDITASSET'" (click)="saveAsset();">Save</button>
+    <button mat-raised-button color="accent" *ngIf="mode === 'EDITASSET'" (click)="cancel();">Cancel</button>
+</div>

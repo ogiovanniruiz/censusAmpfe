@@ -1,0 +1,53 @@
+<body fxLayoutWrap fxLayoutAlign="center" fxLayoutGap="1%" fxLayout="column">
+  <mat-card fxLayoutAlign="center" fxLayout="column">
+    <mat-paginator #paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 15]" [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)" ></mat-paginator>
+    <table matSort (matSortChange)="sortData($event)">
+      <tr>
+        <th mat-sort-header="firstName">First Name</th>
+        <th mat-sort-header="middleName">Middle Name</th>
+        <th mat-sort-header="lastName">Last Name</th>
+        <th mat-sort-header="phoneNumber">Phone Number</th>
+        <th mat-sort-header="email">Email</th>
+      </tr>
+      <tr *ngFor="let person of sortedMembers">
+          <td>{{person.firstName}}</td>
+          <td>{{person.middleName}}</td>
+          <td>{{person.lastName}}</td>
+          <td>{{person.phones}}</td>
+          <td>{{person.emails}}</td>
+
+          <td><button mat-button color="accent" (click)="editMember(person)">EDIT</button></td>
+          <mat-divider></mat-divider>
+      </tr>
+    </table>
+    <br> 
+    <mat-card-actions align="end" *ngIf="dev">
+
+      <input type="file" #file mat-raised-button (change)="fileChanged($event)">  
+      <mat-form-field>
+          <mat-label>Tag this Upload</mat-label>
+          <mat-select [(value)]="selectedTags" multiple>
+            <mat-option *ngFor="let tag of tags" [value]="tag">{{tag}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+      
+      <button mat-raised-button color="accent" (click)="checkUpload()">UPLOAD</button>
+    </mat-card-actions>
+  </mat-card>
+  <section fxLayout="column">
+    <mat-card fxFlex="30%" fxLayoutGap="2%">
+        <section>
+          <mat-form-field> 
+            <input matInput #newTag placeholder="Create a Tag">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="createNewTag(newTag.value)">Create</button>
+        </section>
+
+        <a href="../../../assets/template.csv" download>Download Template</a>
+
+    </mat-card>
+  </section>
+
+  <button mat-raised-button color="primary" (click)="downloadContactHistory()">Download Contact History</button>
+  <mat-progress-bar mode="indeterminate" *ngIf="downloadingContactHistory"></mat-progress-bar>
+</body>

@@ -1,0 +1,16 @@
+<mat-card fxLayoutAlign="center" fxLayout="column">
+  <mat-card-title fxLayoutAlign="center">Contact Form</mat-card-title>
+  <mat-form-field>
+    <input matInput placeholder="Subject" #subject>
+  </mat-form-field>
+  
+  <mat-form-field>
+    <textarea matInput placeholder="Please describe the incident." #message></textarea>
+  </mat-form-field>
+  <mat-checkbox [(ngModel)]="isBug">Is this a bug/glitch?</mat-checkbox>
+  <section fxLayoutAlign="center" fxLayout="row" fxLayoutGap="20%">
+      <button mat-raised-button color="primary" [disabled]="sending" (click)="sendEmail();">SEND</button>
+      <button mat-raised-button color="accent" (click)="closeSettings();">CLOSE</button>
+  </section>  
+
+</mat-card>

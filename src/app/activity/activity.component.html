@@ -1,0 +1,64 @@
+<br>
+<div id="progress-bar" *ngIf="!dataLoaded">
+    <mat-progress-bar mode="indeterminate" *ngIf="!dataLoaded"></mat-progress-bar>
+    <p fxLayoutAlign="center">Loading Activities...</p>
+</div>
+<h1 fxLayoutAlign="center" *ngIf="dataLoaded">{{activityType}} Activities</h1>
+<br>
+
+<mat-tab-group>
+    <mat-tab label="Activities">
+        <mat-grid-list #grid cols="3" rowHeight="2:1">
+            <mat-grid-tile *ngFor="let activity of activities; let i = index">
+              <mat-card fxFlex=80%>
+                    <button mat-icon-button width="40" height="40" style="float: right;">
+                        <img width="40" height="40" alt="campaign" src="../assets/house.png">
+                    </button>
+                    <div>
+                        <h1>{{activity.activityMetaData.name}}</h1>
+                        <h4>{{activity.activityMetaData.description}}</h4>
+                    </div>
+                    <br>
+                    <div fxLayout="row" fxLayoutGap="20%" fxLayoutGap.lg="15px" fxLayoutGap.md="10%" fxLayoutGap.sm="5%">
+                        <button mat-raised-button color="primary" (click)="enterActivity(activity)">ENTER</button>
+                        <button mat-raised-button color="accent" fxLayoutAlign="end" *ngIf="orgLevel === 'ADMINISTRATOR'" (click)="createEditActivity('EDIT', activity)">EDIT</button>
+                        <mat-spinner [diameter]="30" *ngIf="!activitiesKnocks[i] && activityType === 'Canvass'"></mat-spinner><p *ngIf="activitiesKnocks[i] && activityType === 'Canvass'">ID: {{activitiesKnocks[i]['identified']}}<br>DK: {{activitiesKnocks[i]['total']}}</p>
+                    </div>
+              </mat-card>
+              <br>
+              <br>
+            </mat-grid-tile>
+        </mat-grid-list>
+
+        <footer fxLayoutGap="10%" *ngIf="dataLoaded">
+            <section fxLayoutAlign="end">
+                <button  mat-fab *ngIf="orgLevel === 'ADMINISTRATOR'" (click)="createEditActivity('CREATE')"><mat-icon>add</mat-icon></button>
+                <button mat-fab  *ngIf="dev"  (click)="upload()" matTooltip="Pull Texts" color="warn"><mat-icon>warning</mat-icon></button>
+            </section>
+        </footer>
+    </mat-tab>
+    <mat-tab label="Completed">
+        <mat-grid-list #grid cols="3" rowHeight="2:1">
+            <mat-grid-tile *ngFor="let completedActivity of completedActivities; let i = index">
+                <mat-card fxFlex=80%>
+                    <button mat-icon-button width="40" height="40" style="float: right;">
+                        <img width="40" height="40" alt="campaign" src="../assets/house.png">
+                    </button>
+                    <div>
+                        <h1>{{completedActivity.activityMetaData.name}}</h1>
+                        <h4>{{completedActivity.activityMetaData.description}}</h4>
+                    </div>
+                    <br>
+                    <div fxLayout="row" fxLayoutGap="20%" fxLayoutGap.lg="15px" fxLayoutGap.md="10%" fxLayoutGap.sm="5%">
+                        <mat-spinner [diameter]="30" *ngIf="!activitiesKnocksCompleted[i] && activityType === 'Canvass'"></mat-spinner><p *ngIf="activitiesKnocksCompleted[i] && activityType === 'Canvass'">ID: {{activitiesKnocksCompleted[i]['identified']}}<br>DK: {{activitiesKnocksCompleted[i]['total']}}</p>
+                    </div>
+                </mat-card>
+                <br>
+            </mat-grid-tile>
+        </mat-grid-list>
+        <!--
+        <div fxLayout="row" fxLayoutGap="20%" style="margin-left: 50px;" *ngIf="dev">
+            <button mat-raised-button color="primary" (click)="submitImpressionActivities('EDIT', completedActivities)">Submit Impressions Only</button>
+        </div>-->
+    </mat-tab>
+</mat-tab-group>

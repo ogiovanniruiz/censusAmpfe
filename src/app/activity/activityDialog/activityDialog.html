@@ -1,0 +1,165 @@
+<h2 mat-dialog-title fxLayoutAlign="center" *ngIf="mode === 'CREATE'">Create a {{activityType}} Activity</h2>
+<h2 mat-dialog-title fxLayoutAlign="center" *ngIf="mode === 'EDIT'">Editing {{activityType}} Activity</h2>
+<section fxLayout="column" fxLayoutGap="1%" *ngIf="loading">
+    <mat-progress-bar mode="indeterminate" fxFlex="2px" *ngIf="!errors"></mat-progress-bar>
+    <p fxLayoutAlign="center center" style="padding-top:7px;" *ngIf="!errors"s>Please wait while completing...</p>
+    <p fxLayoutAlign="center center" style="padding-top:7px;" *ngIf="errors">There was an error. Please try again or contact support.</p>
+</section>
+<mat-dialog-content fxLayout="row" fxLayout.xs="column"  fxLayout.sm="column" fxLayoutGap="5%" [style.display]="!loading ? 'flex' : 'none'">
+    <!--Left Hand Section-->
+    <section fxLayout="column" fxLayoutGap="1%" fxFlex="50%">
+        <mat-form-field> 
+            <input matInput #activityName type="name" placeholder="Activity Name">
+        </mat-form-field>
+        <mat-form-field > 
+            <input matInput #description type="text" placeholder="Description">
+        </mat-form-field >
+        <section *ngIf="activityType === 'Texting'">
+            <mat-card  fxLayoutGap="3%">
+                
+                <p>Initial Text Message</p>
+                
+                <mat-slide-toggle style="float: right;" checked="true" #senderNameActive (click)="toggleSenderName(senderNameActive)">Include Sender's Name</mat-slide-toggle>
+                <mat-slide-toggle style="float: right;" checked="true" #receiverNameActive (click)="toggleReceiverName(receiverNameActive)">Include Receiver's Name</mat-slide-toggle>
+                <mat-form-field floatLabel="never" fxFill>
+                    <textarea matInput placeholder="Inital Text Message" #initTextMsg maxlength="150"></textarea>
+                </mat-form-field>
+
+                <section fxLayout="column" fxLayoutGap="1%">
+                    <p style="color:red;">This is what the text will look like:</p>
+                    <section fxLayout="row" fxLayoutAlign="center">
+                        <p *ngIf="!senderNameFlag && receiverNameFlag">Hello 'receiver',&nbsp;{{initTextMsg.value}}</p>
+                        <p *ngIf="senderNameFlag && receiverNameFlag"> Hello 'receiver', this is {{userFirstName}}{{initTextMsg.value}}</p>
+                        <p *ngIf="senderNameFlag && !receiverNameFlag"> This is {{userFirstName}}&nbsp;{{initTextMsg.value}}</p>
+                        <p *ngIf="!senderNameFlag && !receiverNameFlag">{{initTextMsg.value}}</p>
+                    </section>
+                </section>
+                <br>
+                <mat-select (selectionChange)="numberChecked($event)" multiple placeholder="Select Phone Numbers" [formControl]="selectedNumbers">
+                    <div *ngFor="let number of phoneNumbers" >
+                        <mat-option value="{{number}}" selected="true">{{number}}</mat-option>
+                    </div>
+                </mat-select>
+                <br>
+                <mat-list role="list" *ngIf="mode === 'EDIT'">
+                    <div *ngFor="let number of preselectedNumbers">
+                        <mat-list-item  role="listitem" >{{number.number}} Available: {{number.available}}</mat-list-item>
+                        <mat-divider></mat-divider>
+                    </div>
+                </mat-list>
+
+
+            </mat-card>
+
+        </section>
+
+        <section *ngIf="activityType === 'Phonebank'">
+            <mat-select (selectionChange)="numberChecked($event)" multiple placeholder="Select Phone Numbers" [formControl]="selectedNumbers">
+                <div *ngFor="let number of phoneNumbers" >
+                    <mat-option value="{{number}}" selected="true">{{number}}</mat-option>
+                </div>
+            </mat-select>
+            <br>
+            <mat-list role="list" *ngIf="mode === 'EDIT'">
+                <div *ngFor="let number of preselectedNumbers">
+                    <mat-list-item  role="listitem" >{{number.number}} Available: {{number.available}} <button mat-button color="warn" (click)="releaseNumber(number.number)">Release</button></mat-list-item>
+                    <mat-divider></mat-divider>
+                </div>
+            </mat-list>
+
+        </section>
+        <mat-card fxLayout="column" fxLayoutGap="2%" *ngIf="activityType != 'Petition'">
+            <h2 fxFlexAlign="center">Targets</h2>
+            <mat-select (selectionChange)="targetChecked($event)" multiple placeholder="Select targets" [formControl]="selectedTargets" *ngIf="mode === 'CREATE'">
+                <mat-option *ngFor="let target of targets" value="{{target._id}}" selected="true">{{target.properties.targetName}}</mat-option>
+            </mat-select>
+            <mat-list role="list" *ngIf="mode === 'EDIT'">
+                <div *ngFor="let target of targets">
+                    <mat-list-item  role="listitem" *ngIf="selectedTargetIds.includes(target._id)">{{target.properties.targetName}}</mat-list-item>
+                    <mat-divider></mat-divider>
+                </div>
+                <button  *ngIf="dev" mat-icon-button color="warn" (click)="resetActivity()">WIPE ACTIVITY</button>
+            </mat-list>
+        </mat-card>
+        <mat-error *ngIf="displayMessage">{{userMessage}}</mat-error>
+        <br>
+    </section>
+
+    <!--Right Hand Section-->
+    <section fxLayout="column" fxLayoutGap="2%" fxFlex="50%">
+        <mat-card fxLayout="column" fxLayoutGap="2%" *ngIf="activityType === 'Texting'">
+            <h2 fxFlexAlign="center">Quick Responses</h2>
+            <div fxLayout="row">
+                <mat-form-field fxFlex="90%"><input matInput placeholder="Add New Quick Response" #newQuickResponse maxlength="150"></mat-form-field>
+                <button mat-icon-button (click)="addQuickResponse(newQuickResponse.value)" style="float: right;"><mat-icon>add</mat-icon></button>
+            </div>
+            <div *ngIf="quickResponses != undefined" fxLayoutGap="2%" fxLayout="column">
+                <mat-card *ngFor="let response of quickResponses;" fxLayout="row">
+                    <p fxFlex="90%" LineBreakMode="WordWrap">{{response}}</p>
+                    <button mat-icon-button (click)="removeQuickResponse(response)" style="float: right;"><mat-icon>cancel</mat-icon></button>
+                </mat-card>
+            </div>
+        </mat-card>
+
+        <mat-card fxLayout="column"  *ngIf="activityType != 'Petition'">
+            <h2 fxFlexAlign="center">Non-Response Codes</h2>
+            <div fxLayout="row">
+                <mat-form-field fxFlex="90%"><input matInput placeholder="Add Non-Response Codes" #newNonresponse> </mat-form-field>
+                <button mat-icon-button (click)="addNonresponse()" style="float: right;"><mat-icon>add</mat-icon></button>
+            </div>
+            <mat-list *ngIf="nonResponses != undefined" fxLayoutGap="2%">
+                <div *ngFor="let nonResponse of nonResponses;">
+                    <mat-list-item>
+                        <div fxFlex="90%">{{nonResponse}}</div>
+                        <button mat-icon-button (click)="removeNonresponse(nonResponse)" style="float: right;"><mat-icon>cancel</mat-icon></button>
+                    </mat-list-item>
+                </div>
+                <mat-list-item >
+                    <div fxFlex="90%">REFUSED</div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card> 
+
+        <mat-card fxLayout="column" fxLayoutGap="2%">
+            <h2 fxFlexAlign="center">Scripts</h2>
+            <mat-select (selectionChange)="scriptChecked($event)" multiple placeholder="Select Scripts" [formControl]="selectedScripts" >
+                <mat-option *ngFor="let script of scripts" value="{{script._id}}" selected="true">{{script.title}}</mat-option>
+            </mat-select>
+            <mat-list role="list" *ngIf="mode === 'EDIT'">
+                <div *ngFor="let script of scripts">
+                    <mat-list-item  role="listitem" *ngIf="selectedScriptIds.includes(script._id)">{{script.title}}</mat-list-item>
+                </div>
+            </mat-list>
+        </mat-card>
+
+        <section *ngIf="activityType === 'Petition' && mode === 'EDIT'" fxLayout="column" fxLayoutGap="2%">
+            <mat-card fxLayoutAlign="center" fxLayout="row" fxLayoutGap="2%">
+                <button mat-raised-button color="primary" (click)="generateLink()" fxFlexAlign="center">Generate URL</button>
+                <input type="text" value='{{activityURL}}' #userinput >
+                <button (click)="copyInputMessage(userinput)" value="click to copy">Copy Link</button>
+            </mat-card>
+
+            <mat-card fxLayoutAlign="center" fxLayout="column" fxLayoutGap="5%">
+                <section fxLayout="row" fxLayoutGap="1%">
+                    <input type="file" #file mat-raised-button (change)="fileChanged($event)" *ngIf="dev"> 
+                    <button mat-raised-button color="accent" (click)="upload()" *ngIf="dev" >Upload</button> 
+                    
+                </section>
+                <a href="../../../../assets/petitionTemplate.csv" download>Download Template</a>
+                <mat-progress-bar mode="indeterminate" *ngIf="loadingPledgeCards"></mat-progress-bar>
+                <p *ngIf="loadedResults"> Successful Uploads: {{loadedResults}}</p>
+                <mat-error>Upload format should be in .csv and headers should match with exact capitalizations.</mat-error>
+                <mat-error>Uploading button is being maintained. Please send csv's for upload to Oscar Gio Ruiz or LuisT on 'Discord'.</mat-error>
+
+            </mat-card>
+        </section>
+        <br> 
+    </section>
+</mat-dialog-content>
+<mat-dialog-actions align="end" [style.display]="!loading ? 'flex' : 'none'">
+    <button mat-raised-button color="accent" [disabled]="loadingPledgeCards" (click)="close()" fxFlexAlign="center">CLOSE</button>
+    <button mat-raised-button color="primary" [disabled]="loadingPledgeCards" (click)="createActivity()" *ngIf="mode === 'CREATE'" fxFlexAlign="center">SAVE</button>
+    <button mat-raised-button color="primary" [disabled]="loadingPledgeCards" (click)="editActivity()" *ngIf="mode === 'EDIT'" fxFlexAlign="center">SAVE</button>
+    <button mat-raised-button color="warn" [disabled]="loadingPledgeCards" (click)="deleteActivity()" *ngIf="mode === 'EDIT' && dev" style="float: right;" >DELETE</button>
+    <button mat-raised-button color="accent" [disabled]="loadingPledgeCards" (click)="completeActivity()" *ngIf="mode === 'EDIT'" style="float: right;" >SUBMIT TO SWORD</button>
+</mat-dialog-actions>

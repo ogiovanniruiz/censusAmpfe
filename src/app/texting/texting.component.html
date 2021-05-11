@@ -1,0 +1,189 @@
+<div fxLayout.xs="column"  fxLayout.sm="column" fxLayout="row" fxLayoutWrap fxLayoutAlign="center" fxLayoutGap="3%">
+    <section fxFlex="40%" fxFlex.sm="60%">
+        <mat-progress-bar *ngIf="loadingPeople" mode="indeterminate"></mat-progress-bar>
+        <mat-card fxLayoutGap="5%" fxLayout="column" >
+            <mat-tab-group  (selectedTabChange)="getRespondedPeople(); getIdentifiedPeople()" fxFlex="100%" *ngIf="numberAvailable">
+                <mat-tab label="Loaded People"> 
+                    
+                    <mat-list *ngIf="people.length > 0 ; else noPeople">
+                        <div *ngFor="let person of people;" >
+                            <mat-list-item >
+                                <mat-icon>perm_identity</mat-icon>
+                                <div fxFlex="90%">{{person.firstName}} {{person.lastName}}</div>
+                                <p>{{person.phones}}</p>
+                                <button mat-icon-button [disabled]="sendDisabled" (click)="sendInitText(person, initialMessage, postMessage)" style="float: right;"><mat-icon>send</mat-icon></button>
+                                <mat-divider></mat-divider>
+                            </mat-list-item>
+                        </div>   
+                    </mat-list>
+                    <ng-template #noPeople>
+                        <br>
+                        <p fxLayoutAlign="center">There are no People loaded...</p>
+                        <br>
+                    </ng-template>
+                    <div><button fxFlex="100%" mat-raised-button color="primary" (click)="lockNewPeople()">Load More People</button></div>  
+                    <br>
+                    <section fxLayout="column" fxLayoutAlign="center">
+                        <p>Your Phone Number: {{userPhoneNumber}}</p>
+                    </section>
+                    <mat-progress-bar *ngIf="sendingText" mode="indeterminate"></mat-progress-bar>
+                    <section fxLayout="row" fxLayoutAlign="center">
+                        <p>{{fullDisplayedText}}</p>
+                    </section>
+                    <!--
+                    <br>
+                    <section fxLayout="column" fxLayoutAlign="center">
+                        <div>Total Residents: {{numTotalResidents}}</div>
+                        <div>Contacted: {{numTextSent}}</div>
+                        <div>Responded: {{numTextReceived}}</div>
+                        <div>Identified: {{numIdentified}}</div>
+                        <div>Positives: {{numPositives}}</div>
+                    </section>-->
+                    <!--<section>
+                        <button (click)="getIdentifiedPeople();">Download Report</button>
+                    </section>-->
+                </mat-tab>
+                <mat-tab label="Responded People"> 
+                    <mat-list *ngIf="respondedPeople">
+                        <div *ngFor="let person of respondedPeople;" >
+                            <mat-list-item>
+                                <mat-icon>perm_identity</mat-icon>
+                                <div fxFlex="90%">{{person.firstName}} {{person.lastName}}</div>
+                                <button mat-icon-button (click)="getConversation(person)" style="float: right;"><mat-icon>chat</mat-icon></button>
+                                <mat-divider></mat-divider>
+                            </mat-list-item>
+                        </div>   
+                    </mat-list>
+                </mat-tab>
+                
+                <mat-tab label="Completed" *ngIf="orgLevel === 'ADMINISTRATOR'">
+                    <mat-list *ngIf="identifiedPeople">
+                        <div *ngFor="let person of identifiedPeople;" >
+                            <mat-list-item>
+                                    <mat-icon>perm_identity</mat-icon>
+                                    <div fxFlex="90%">{{person.firstName}} {{person.lastName}}</div>
+                                    <button mat-icon-button (click)="selectPerson(person)" style="float: right;"><mat-icon>chat</mat-icon></button>
+                                    <mat-divider></mat-divider>
+                            </mat-list-item>
+                        </div>   
+                    </mat-list>
+                </mat-tab>
+            </mat-tab-group>
+            <mat-error *ngIf="!numberAvailable">There are no phone numbers available. Administrator should add more numbers.</mat-error>
+        </mat-card>
+    </section>
+
+    <section class="full-height" *ngIf="selectedPerson != undefined" fxFlex="60%" fxFlex.sm="100%" fxFlex.xs="100%">
+        <mat-card fxLayout="column" fxFlex="100%">
+            <mat-card-header fxFlexAlign="center"><mat-card-title><h2>{{selectedPerson.firstName}} {{selectedPerson.lastName}}</h2></mat-card-title></mat-card-header>
+            <mat-card-content fxFlex="90%" fxLayout="column" fxLayoutGap="3%">
+                <mat-divider></mat-divider>
+                <div *ngFor="let responses of textConversation" >
+                    <div [ngClass]="{'volunteer' : responses.origin === 'VOLUNTEER', 'voter' : responses.origin === 'VOTER'}">
+                        <div class="text">{{responses.msg}}</div>
+                    </div>
+                </div>
+            </mat-card-content>
+            <mat-card-actions fxFlex="60px" *ngIf="!personCompleted">
+                <mat-divider></mat-divider>
+                <mat-form-field fxFlex="90%">
+                        <input matInput placeholder="Input a response" #inputResponse (keyup.enter)="sendFollowUpText(selectedPerson, inputResponse.value, 'false')">
+                </mat-form-field>
+                <button mat-icon-button (click)="sendFollowUpText(selectedPerson, inputResponse.value, 'false')" style="float: right;"><mat-icon>send</mat-icon></button>
+            </mat-card-actions>
+            <mat-error *ngIf="showErrorMsg">{{errorMsg}}</mat-error>
+        </mat-card>
+    </section>
+
+    <section *ngIf="selectedPerson != undefined" fxLayout="column" fxFlex="40%" fxFlex.sm="100%" fxFlex.xs="100%" fxLayoutGap="5%">
+        <mat-card fxLayout="column" *ngIf="!personCompleted">
+            <mat-card-header fxFlexAlign="center"><mat-card-title><h2>Quick Responses</h2></mat-card-title></mat-card-header>
+            <mat-card-actions fxLayout="column" fxLayoutGap="5%">
+                <div *ngFor="let response of quickResponses;" fxLayoutAlign="center">
+                    <button mat-raised-button fxFlex="90%" color="primary" (click)="onResponseChange(response)">{{response}}</button>
+                </div>
+                <br>
+            </mat-card-actions>
+        </mat-card>
+
+        <mat-card  fxLayout="column" fxLayoutGap="5%" *ngIf="!personCompleted">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Non Response Codes</mat-panel-title>
+                    <mat-panel-description></mat-panel-description>                   
+                </mat-expansion-panel-header>
+                <section fxLayout="column"  fxLayoutGap="5%">
+                    <button *ngFor="let nonResponse of nonResponses;" mat-raised-button fxFlex="100%" color="primary"  (click)="nonResponseId(nonResponse)">{{nonResponse}}</button>
+                    <button  mat-raised-button fxFlex="100%" color="warn"  (click)="nonResponseId('REFUSED')">REFUSED</button>
+                </section>      
+            </mat-expansion-panel>  
+            <mat-card-header fxFlexAlign="center"><mat-card-title><h2>Scripts</h2></mat-card-title></mat-card-header>
+            <mat-card-content>
+                <section *ngFor="let script of scripts; let j = index" >
+                    <div>{{script.title}}</div>
+                    <section fxLayout="column" fxLayoutGap="5%">
+                            <p>{{script.initMessage}}</p>
+                                <mat-accordion>
+                                    <mat-expansion-panel *ngFor="let question of script.questions; let k = index" [ngSwitch]="question.questionType" >
+                                        <mat-expansion-panel-header  class="right-aligned-header">
+                                          <mat-panel-title>{{k + 1}}</mat-panel-title>
+                                          <mat-panel-description>{{question.question}}</mat-panel-description>
+                                        </mat-expansion-panel-header>
+                                        <section *ngSwitchCase="'RADIO'" >
+                                            <mat-radio-group fxLayout="column" fxLayoutGap="5%" [ngModel] #radioAnswers="ngModel" name="{{question.question}}">
+                                                <mat-radio-button *ngFor="let responses of question.responses" value="{{responses.response}},{{responses.idType}}">{{responses.response}} <p color="primary">{{responses.idType}}</p></mat-radio-button>
+                                            </mat-radio-group>
+                                        </section>
+                                        <section *ngSwitchCase="'TEXT'" >
+                                            <mat-form-field fxFlex="100%"> 
+                                              <input matInput #textAnswers placeholder="Type your answer here" name="{{question.question}}">
+                                            </mat-form-field>
+                                        </section>
+                                    </mat-expansion-panel>
+ 
+                                </mat-accordion>
+                            <!--<button mat-raised-button color="primary" fxFlexAlign="center" fxFlex="80%" (click)="idPerson(selectedPerson, script); accordion.closeAll()">Submit {{script.title}}</button>
+                            -->
+                    </section>
+                </section>
+
+
+            </mat-card-content>
+            <mat-card-actions fxLayoutAlign="center">
+                <button mat-raised-button color="primary" (click)="idPerson();">FINISH IDENTIFICATION</button> 
+            </mat-card-actions>
+        </mat-card>
+        <section *ngIf="selectedPerson != undefined">
+            <div *ngFor="let history of selectedPerson.textContactHistory" fxLayout="column" fxLayoutGap="5%">
+                <div>Complete: {{history.complete}}</div> 
+                <div>Identified: {{history.identified}}</div>
+                <div>Refused: {{history.refused}}</div>
+                <div>LockedBy: {{history.lockedBy}}</div>
+                
+            </div>
+        </section>
+    </section>
+</div>
+
+    
+<!--
+            <div fxLayoutAlign="center center" fxFlex="90%" fxFlexAlign="center">
+                <mat-card fxLayout="column" fxLayoutAlign="center center" fxFlex="100%">
+                    <mat-card-header><mat-card-title><h2>Meta-Data</h2></mat-card-title></mat-card-header>
+                    <mat-card-content fxLayout="row">
+                        <canvas id="text_canvas" width="200" height="200"></canvas>
+                        <div >
+                            <h2 fxLayout="row">Texts Sent: {{text_sent_count}}</h2>   
+                            <h2 fxLayout="row">Total Voters: {{total_voters}}</h2>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+-->
+
+
+<!--<mat-checkbox #pre_msg  [(ngModel)]="checked" (click)='pre_msg_toggle(pre_msg);'>Include: Hey, my name is {{userProfile.first_name}}.</mat-checkbox>
+        <mat-checkbox #post_msg  [(ngModel)]="checked2" (click)='post_msg_toggle(post_msg);' [checked]='checked2'>Include polling location and address.</mat-checkbox>--> 
+<!--<div *ngIf="campaignLvl>1" fxLayout="column">
+    <button  mat-raised-button color="accent" fxFlex="90%" (click)="send_all(initial_message)">Send All Texts</button>
+</div>-->

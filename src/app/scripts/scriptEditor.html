@@ -1,0 +1,83 @@
+<div fxLayout="row" fxLayout.xs="column" fxLayoutWrap fxLayoutGap="5%" fxLayoutAlign="center" *ngIf="orgID != 'NONE'">
+    <form fxFlex="100%" fxLayout="column" fxLayoutGap="2%">
+        <h1>Create a Script:</h1>
+        <mat-form-field>
+            <input matInput placeholder="Script Title" #scriptTitle>
+        </mat-form-field>
+
+        <mat-form-field>
+            <textarea matInput placeholder="Initial Message" #initMsg></textarea>
+        </mat-form-field>
+
+        <mat-expansion-panel [(expanded)]="createQuestionPanelExpanded">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Add a Question</mat-panel-title>
+              <mat-panel-description>Add a question</mat-panel-description>
+            </mat-expansion-panel-header>
+        
+            <div fxLayout="row">
+                    <mat-form-field fxFlex="90%"><input matInput placeholder="Add Question" #newQuestion> </mat-form-field> 
+            </div>
+            <mat-form-field>
+                <mat-label>Question Type</mat-label>
+                <mat-select [(value)]="questionType">
+                  <mat-option *ngFor="let type of questionTypes" [value]="type">{{type}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div fxLayout="row" *ngIf="questionType === 'RADIO'" fxLayoutGap="5%">
+                <mat-form-field fxFlex="50%" ><input matInput placeholder="Response" #newResponse> </mat-form-field>
+                <mat-form-field fxFlex="50%">
+                    <mat-label>ID Type</mat-label>
+                    <mat-select [(value)]="idType">
+                        <mat-option [value]="'POSITIVE'">Positive</mat-option>
+                        <mat-option [value]="'NEUTRAL'">Neutral</mat-option>
+                        <mat-option [value]="'NEGATIVE'">Negative</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button mat-icon-button (click)="addResponse(newResponse.value, idType)" style="float: right;"><mat-icon>add</mat-icon></button>
+            </div>
+            <mat-list *ngIf="responses != undefined">
+                <div *ngFor="let response of responses;">
+                    <mat-list-item >
+                        <div fxFlex="90%">{{response.response}} IDType: {{response.idType}}</div>
+                        <button mat-icon-button (click)="removeResponse(response)" style="float: right;"><mat-icon>cancel</mat-icon></button>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                </div>
+            </mat-list>
+            <br>
+            <button mat-raised-button (click)="addQuestion()" color="primary">Add Question</button>
+            <mat-error fxLayoutAlign="center" *ngIf="showQuestionMessage">{{questionMessage}}</mat-error>
+        </mat-expansion-panel>
+
+        <section *ngFor="let question of questions" fxLayout="row" fxLayoutGap="5%">
+            <mat-card fxFlex="90%">
+                <section>Question: {{question.question}}</section>
+                <section>Type: {{question.questionType}}</section>
+                <section *ngIf="question.questionType != 'TEXT'" fxLayout="row" >
+                    <p>Responses: </p><section fxLayout="row" *ngFor="let response of question.responses">{{response.response}}</section>
+                </section>
+
+            </mat-card>
+            <button mat-icon-button (click)="removeQuestion(question)" style="float: right;"><mat-icon>cancel</mat-icon></button>
+        </section>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <button fxFlex="50%" mat-raised-button color="primary" *ngIf="mode === 'CREATE'" (click)="createScript()">CREATE NEW</button>
+            <button fxFlex="50%" mat-raised-button color="primary" *ngIf="mode === 'EDIT'" (click)="editScript()">SAVE EDITS</button>
+            <button fxFlex="50%" mat-raised-button color="accent" (click)="clear()">CLEAR</button> 
+        </div>
+        <mat-error fxLayoutAlign="center" *ngIf="showScriptMessage">{{scriptMessage}}</mat-error>
+
+    </form>
+    <div fxFlex="100%" fxLayout="column" fxLayoutGap="5%">
+        <h1>Saved Scripts:</h1>
+        <div *ngFor="let script of scripts" fxLayout="row">
+            <button class="full-width" mat-raised-button  (click)="selectScript(script)" fxFlex="90%">{{script.title}}</button>
+            <button mat-icon-button (click)="deleteScript(script)" style="float: right;"><mat-icon>cancel</mat-icon></button>
+        </div>            
+    </div>
+</div>
+
+<section *ngIf="orgID === 'NONE'">
+    <mat-error fxLayoutAlign="center">Please select an organization to review and create scripts.</mat-error>
+</section>

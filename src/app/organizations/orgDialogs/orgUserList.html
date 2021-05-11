@@ -1,0 +1,46 @@
+<h2 mat-dialog-title fxLayoutAlign="center">{{orgName}} Users</h2>
+<mat-dialog-content>
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+    <mat-paginator #paginator [pageSize]="pageSize" [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)"></mat-paginator>
+    <table matSort (matSortChange)="sortData($event)">
+        <tr>
+          <th mat-sort-header="firstName">First Name</th>
+          <th mat-sort-header="lastName">Last Name</th>
+          <th mat-sort-header="permission">Status</th>
+        </tr>
+        <tr *ngFor="let person of sortedUsers">
+            <td>{{person.firstName}}</td>
+            <td>{{person.lastName}}</td>
+            <td>
+                <div *ngFor="let userOrg of person.user.userOrgs">
+                    <button *ngIf="userOrg.orgID === orgSelected._id" mat-button color="primary" [matMenuTriggerFor]="menu" [disabled]="userOrg.level === 'ADMINISTRATOR' && orgLevel != 'ADMINISTRATOR'">{{userOrg.level}}</button>
+                </div>
+                <div *ngFor="let request of orgSelected.requests">
+                    <button *ngIf="request === person.user._id" mat-button color="accent" [matMenuTriggerFor]="menu">WAITING APPROVAL</button>
+                </div>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="editMember(person, orgSelected, 'ADMINISTRATOR')" *ngIf="orgLevel === 'ADMINISTRATOR'">
+                        <mat-icon>account_circle</mat-icon>
+                        <span>Admin</span>
+                    </button>
+                    <button mat-menu-item (click)="editMember(person, orgSelected, 'LEAD')">
+                        <mat-icon>how_to_reg</mat-icon>
+                        <span>Lead</span>
+                    </button>
+                    <button mat-menu-item (click)="editMember(person, orgSelected, 'VOLUNTEER')">
+                        <mat-icon>person_add</mat-icon>
+                        <span>Volunteer</span>
+                    </button>
+                    <button mat-menu-item (click)="editMember(person, orgSelected, 'REMOVE')">
+                        <mat-icon>remove</mat-icon>
+                        <span>Remove</span>
+                    </button>
+                </mat-menu>
+            </td>
+            <mat-divider></mat-divider>
+        </tr>
+    </table>
+</mat-dialog-content> 
+<mat-dialog-actions align="end" >
+    <button mat-raised-button color="accent" (click)="return();" >CLOSE</button>
+</mat-dialog-actions>

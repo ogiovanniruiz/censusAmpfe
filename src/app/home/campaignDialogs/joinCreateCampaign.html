@@ -1,0 +1,37 @@
+
+<section fxLayout="column" fxLayoutAlign="center" fxLayoutGap="5%"  *ngIf="mode === 'CREATE'">
+    <mat-card fxLayout="column" fxLayoutGap="5%">
+        <mat-card-title fxLayoutAlign="center">Create a Campaign</mat-card-title>
+        <mat-form-field>
+            <input matInput #name_create placeholder="Campaign Name">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput #description placeholder="Description">
+        </mat-form-field>
+        <!--<mat-checkbox class="example-margin" (change)="thirdPartyChecked($event.checked)">3rd Party Data</mat-checkbox>-->
+        <button mat-raised-button color="primary" (click)="createCampaign(name_create.value, description.value)">SUBMIT</button>
+        <button mat-raised-button color="accent" (click)="closeDialog();">CANCEL</button>
+    </mat-card>
+</section>
+
+<section fxLayout="column" *ngIf="mode === 'REQUEST'" fxLayoutGap="10%">
+    <mat-card fxLayout="column" fxLayoutGap="5%">
+        <mat-card-title fxLayoutAlign="center">Request a Campaign</mat-card-title>
+        <mat-form-field>
+            <input matInput #requestID placeholder="Campaign ID">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="requestCampaign(requestID.value)">REQUEST CAMPAIGN</button>
+        <button mat-raised-button color="accent" (click)="closeDialog();">CANCEL</button>
+        <mat-error fxLayoutAlign="center" *ngIf="displayMessage">{{userMessage}}</mat-error>
+    </mat-card>
+</section>
+
+<section *ngIf="mode === 'REQUESTSUCCESS'">
+    <mat-card fxLayout="column" fxLayoutGap="5%">
+        <span fxLayoutAlign="center">
+            <img width="200" height="200" alt="success" src="../assets/success.png">
+        </span>
+
+        <button mat-raised-button color="primary" (click)="closeDialog();">CLOSE</button>
+    </mat-card>
+</section>

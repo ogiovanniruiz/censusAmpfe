@@ -1,0 +1,32 @@
+<mat-spinner *ngIf="!sortedReports"></mat-spinner>
+<h2 mat-dialog-title fxLayoutAlign="center" *ngIf="sortedReports">Events Summary</h2>
+<mat-dialog-content *ngIf="sortedReports">
+    <mat-paginator #paginator [pageSize]="pageSize" [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)"></mat-paginator>
+    <table matSort (matSortChange)="sortData($event)">
+        <tr>
+            <th mat-sort-header="org">Organization</th>
+            <th mat-sort-header="numOfEvents">Number of Events</th>
+            <th mat-sort-header="total_number_of_impressions">Total Number of Impressions</th>
+            <th mat-sort-header="total_number_of_paid_staffvolun">Number of paid staff/volunteer</th>
+            <th *ngFor="let htcGroup of htcGroups | keyvalue : returnZero" mat-sort-header="{{htcGroup.key}}">{{htcGroup.value}}</th>
+            <th mat-sort-header="total_htc_of_impressions">Total Number of HTC Impression</th>
+            <th mat-sort-header="funding_volunteer_hours">Volunteer Hours</th>
+            <th *ngFor="let lang of languages | keyvalue : returnZero" mat-sort-header="{{lang.key}}">{{lang.value}}</th>
+        </tr>
+
+        <tr *ngFor="let report of sortedReports">
+            <td>{{report.org}}</td>
+            <td>{{report.numOfEvents}}</td>
+            <td>{{report.total_number_of_impressions}}</td>
+            <td>{{report.total_number_of_paid_staffvolun}}</td>
+            <td *ngFor="let htc of report.htcGroup | keyvalue : returnZero">{{htc.value}}</td>
+            <td>{{report.total_htc_of_impressions}}</td>
+            <td>{{report.funding_volunteer_hours}}</td>
+            <td *ngFor="let langs of report.language | keyvalue : returnZero">{{langs.value}}</td>
+            <mat-divider></mat-divider>
+        </tr>
+    </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" (click)="closeSettings();">CLOSE</button>
+</mat-dialog-actions>

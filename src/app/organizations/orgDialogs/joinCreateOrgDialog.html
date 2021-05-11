@@ -1,0 +1,61 @@
+
+<mat-card fxLayout="column" *ngIf="mode === 'CREATE'">
+        <mat-card-title fxLayoutAlign="center">Create an Organization</mat-card-title>
+        <mat-form-field>
+            <input matInput #create_org_name placeholder="Organization Name">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput #org_description placeholder="Description">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="createOrganization(create_org_name.value, org_description.value)">SUBMIT</button>
+        <br>
+        <button mat-raised-button color="accent" (click)="return();">RETURN</button>
+</mat-card>
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<mat-card fxLayout="column" *ngIf="mode === 'REQUEST'">
+    <mat-card-title fxLayoutAlign="center">Request Organization</mat-card-title>
+    <mat-form-field>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter Organization by Name">
+    </mat-form-field>
+    <mat-dialog-content *ngIf="dataSource">
+        <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef style="display: none">Organization Name</th>
+              <td mat-cell *matCellDef="let element">{{element.name}}</td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef style="display: none">Send Request</th >
+                    <td mat-cell *matCellDef="let element">
+                        <button (click)="sendOrgRequest(element._id)" mat-button color="primary">SEND REQUEST</button>
+                    </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </mat-dialog-content>
+    <br>
+    <button mat-raised-button color="accent" (click)="closeDialog();">CLOSE</button>
+    <br>
+    <mat-error fxLayoutAlign="center" *ngIf="displayMessage">{{userMessage}}</mat-error>
+</mat-card>
+<section *ngIf="mode === 'REQUESTSUCCESS'">
+    <mat-card fxLayout="column" fxLayoutGap="5%">
+        <span fxLayoutAlign="center">
+            <img width="200" height="200" alt="success" src="../assets/success.png">
+        </span>
+
+        <button mat-raised-button color="primary" (click)="closeDialog();">CLOSE</button>
+    </mat-card>
+</section>
+<!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<mat-card fxLayout="column" *ngIf="mode === 'UPLOAD'">
+<mat-card-title fxLayoutAlign="center">Upload Occupancy List</mat-card-title>
+<mat-card-actions align="end">
+        <input type="file" #file mat-raised-button (change)="fileChanged($event)">  
+        <button mat-raised-button color="accent" (click)="checkUpload()">UPLOAD</button>
+</mat-card-actions>
+<br>
+<button mat-raised-button color="accent" (click)="closeDialog();">CLOSE</button>
+<br>
+<mat-error fxLayoutAlign="center" *ngIf="displayMessage">{{userMessage}}</mat-error>
+</mat-card>

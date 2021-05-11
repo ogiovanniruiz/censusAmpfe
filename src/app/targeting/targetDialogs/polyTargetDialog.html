@@ -1,0 +1,41 @@
+<section *ngIf="data.mode === 'CREATE'">
+  <h2 mat-dialog-title fxLayoutAlign="center">Creating a Poly Target</h2>
+  <mat-dialog-content fxLayout="column" fxLayoutGap="5%">
+      <mat-form-field><input matInput #targetName placeholder="Target Name"></mat-form-field>
+      <mat-form-field>
+        <mat-label>Extra Query</mat-label>
+        <mat-select #targetType>
+          <mat-option value="ORGMEMBERS" (click)="targetTypeSelected('')">Members Only</mat-option>
+          <!--<mat-option value="TAG" (click)="targetTypeSelected('')">Tags*</mat-option>-->
+          <!--<mat-option  *ngFor="let script of scripts" color="primary" value="SCRIPT" (click)="targetTypeSelected(script._id)">{{script.title}}</mat-option>-->
+        </mat-select>
+      </mat-form-field> 
+      <mat-form-field *ngIf="targetType.value === 'SCRIPT'">
+          <mat-label>Script Response Type</mat-label>
+          <mat-select #scriptResponseType>
+            <mat-option value="POSITIVE">Positive</mat-option>
+            <mat-option value="NEUTRAL">Neutral</mat-option>
+            <mat-option value="NEGATIVE">Negative</mat-option>
+            <mat-option value="NONRESPONSE">Non-Response</mat-option>
+          </mat-select>
+      </mat-form-field>
+      <mat-form-field *ngIf="targetType.value === 'TAG'">
+          <mat-label>Tag Targeting</mat-label>
+          <mat-select #tags multiple>
+            <mat-option value="PAV">PAV</mat-option>  
+            <mat-option value="Bloom">Bloomington</mat-option>  
+          </mat-select>
+      </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="createTarget();">CREATE TARGET</button>
+  </mat-dialog-actions>
+  <br>
+  <mat-error *ngIf="showErrorMsg">Target needs a name.</mat-error>
+</section>
+<section *ngIf="data.mode === 'EDIT'">
+  <p>Target Name: {{data.selectedPolygon.properties.targetName}}</p>
+  <p *ngFor="let query of data.selectedPolygon.properties.queries">QueryType:  {{query.queryType}}</p>
+  <button mat-raised-button color="warn" (click)="removeTarget();">DELETE</button>
+
+</section>

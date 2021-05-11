@@ -1,0 +1,65 @@
+<mat-tab-group>
+  <mat-tab label="In Progress"> 
+    <mat-card fxLayoutAlign="center" fxLayout="column">
+      <mat-paginator #paginator [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 15]" [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)"></mat-paginator>
+      <table matSort (matSortChange)="sortData($event)">
+          <tr>
+            <th mat-sort-header="name">Event Name</th>
+            <th mat-sort-header="date">Date</th>
+            <th mat-sort-header="time">Time</th>
+            <th mat-sort-header="organization">Organization</th>
+            <th mat-sort-header="locationName">Location Name</th>
+            <th mat-sort-header="blockGroups">Block Groups</th>
+            <th mat-sort-header="cities">Cities</th>
+          </tr>
+          <tr *ngFor="let event of sortedEvents">
+              <td>{{event.activityMetaData.name}}</td>
+              <td>{{event.activityMetaData.endDate}}</td>
+              <td>{{event.time}}</td>
+              <td>{{event.orgCreatorName}}</td>
+              <td>{{event.locationName}}</td>
+              <td>{{event.blockGroupID}}</td>
+              <td>{{event.address.city}}</td>
+             
+              <td><button [disabled]="!event.activityMetaData.orgIDs.includes(orgID)" mat-button color="accent" (click)="openEventDialog(event, 'EDIT')">EDIT</button></td>
+              <td><button [disabled]="!event.activityMetaData.orgIDs.includes(orgID)" mat-button color="warn" (click)="removeEvent(event)">DELETE</button></td>
+              <td><button [disabled]="!event.activityMetaData.orgIDs.includes(orgID)" mat-button color="primary" (click)="openEventDialog(event, 'COMPLETE')">COMPLETE</button></td>
+              
+              <mat-divider></mat-divider>
+          </tr>
+      </table> 
+      <br>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="Complete">
+      <mat-card fxLayoutAlign="center" fxLayout="column">
+          <mat-paginator #paginatorCompleted [pageSize]="pageSizeCompleted" [pageSizeOptions]="[5, 10, 15]" [length]="totalSizeCompleted" [pageIndex]="currentPageCompleted" (page)="pageEventCompleted = handlePageCompleted($event)"></mat-paginator>
+          <table matSort (matSortChange)="sortDataCompleted($event)">
+              <tr>
+                  <th mat-sort-header="name">Event Name</th>
+                  <th mat-sort-header="date">Date</th>
+                  <th mat-sort-header="time">Time</th>
+                  <th mat-sort-header="organization">Organization</th>
+                  <th mat-sort-header="locationName">Location Name</th>
+                  <th mat-sort-header="blockGroups">Block Groups</th>
+                  <th mat-sort-header="cities">Cities</th>
+              </tr>
+              <tr *ngFor="let eventsCompleted of sortedEventsCompleted">
+                  <td>{{eventsCompleted.activityMetaData.name}}</td>
+                  <td>{{eventsCompleted.activityMetaData.endDate}}</td>
+                  <td>{{eventsCompleted.time}}</td>
+                  <td>{{eventsCompleted.orgCreatorName}}</td>
+                  <td>{{eventsCompleted.locationName}}</td>
+                  <td>{{eventsCompleted.blockGroupID}}</td>
+                  <td>{{eventsCompleted.address.city}}</td>
+
+                  <td><button [disabled]="!eventsCompleted.activityMetaData.orgIDs.includes(orgID)" mat-button color="accent" (click)="openEventDialogCompleted(eventsCompleted, 'REVIEW')">REVIEW</button></td>
+                  <mat-divider></mat-divider>
+              </tr>
+          </table>
+          <br>
+      </mat-card>
+    <br>
+  </mat-tab>
+</mat-tab-group>
+

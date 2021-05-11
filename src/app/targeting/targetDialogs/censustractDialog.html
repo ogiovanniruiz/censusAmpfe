@@ -1,0 +1,62 @@
+<mat-card fxLayout="column" fxLayoutGap="5%">
+  <!--<p fxLayoutAlign="center">{{data.name}}</p>-->
+  <section  *ngIf="!dataLoaded" fxLayout="column" fxLayoutGap="5%">
+  <p fxLayoutAlign="center">Loading Data...</p>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </section>
+  <section *ngIf="dataLoaded" fxLayout="column" fxLayoutGap="5%">
+    <p fxLayoutAlign="center">Geoid: {{data.properties.geoid}}</p>
+    <p fxLayoutAlign="center">LRS: {{data.properties.lrs}}</p>
+    <p fxLayoutAlign="center">Number of Occupied Units: {{data.properties.numOccupiedUnits}}</p>
+  </section>
+
+  <section *ngIf="locked === true" fxLayout="column" fxLayoutGap="5%">
+      <p fxLayoutAlign="center">This organization is locked to this Block.</p>
+      <mat-list>
+    <mat-list-item *ngFor="let org of registeredOrgs">
+        <mat-icon matListIcon>group</mat-icon>
+        <h3 matLine> {{org.name}}</h3>
+        <p matLine><span>{{org.description}}</span></p>
+        <button mat-button color="primary" [matMenuTriggerFor]="menu" *ngIf="dataManager">ACTION</button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="unlockTarget(org._id)">
+            <mat-icon>remove</mat-icon>
+            <span>UNLOCK</span></button>
+          <button mat-menu-item (click)="removeTarget(org._id)">          
+            <mat-icon>block</mat-icon>
+            <span>REMOVE</span>
+          </button>
+        </mat-menu>
+    </mat-list-item>
+  </mat-list>
+  </section>
+  <section *ngIf="locked === false" fxLayout="column" fxLayoutGap="5%">
+    <mat-expansion-panel *ngIf="ready">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Registered Organizations
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item *ngFor="let org of registeredOrgs">
+            <mat-icon matListIcon>group</mat-icon>
+            <h3 matLine> {{org.name}}</h3>
+            <p matLine><span>{{org.description}}</span></p>
+            <button mat-button color="primary" [matMenuTriggerFor]="menu" *ngIf="dev || orgID === org._id || dataManager">ACTION</button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="lockTarget(org._id)" *ngIf="dev || dataManager">
+                <mat-icon>done</mat-icon>
+                <span>LOCK</span></button>
+              <button mat-menu-item (click)="removeTarget(org._id)" >          
+                <mat-icon>block</mat-icon>
+                <span>REMOVE</span>
+              </button>
+          </mat-menu>
+        </mat-list-item>
+      </mat-list>
+
+    </mat-expansion-panel>
+    <button mat-raised-button color="primary" (click)="createTarget()">REGISTER FOR BLOCK</button>
+    <mat-error fxLayoutAlign="center" *ngIf="displayMessage">{{userMessage}}</mat-error>
+  </section>
+</mat-card>

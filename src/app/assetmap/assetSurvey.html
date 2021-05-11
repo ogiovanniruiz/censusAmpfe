@@ -1,0 +1,172 @@
+<div fxLayout="column" fxLayoutGap="2%">
+    <h1 fxLayoutAlign="center center" *ngIf="!createAssetFlag">Asset Map Survey</h1>
+    <h1 fxLayoutAlign="center center" *ngIf="createAssetFlag">Parcel Editor</h1>
+    <h3 fxLayoutAlign="center center">{{address1}}</h3>
+    <h3 fxLayoutAlign="center center">{{address2}}</h3>
+    
+    <mat-dialog-content *ngIf="createAssetFlag" fxLayout="column" fxLayoutGap="5%">
+        <!--<section *ngIf="!badAddressFlag" fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="50">
+                <mat-label>Owner 1 Name</mat-label>
+                <input matInput placeholder="Owner One Name" required #owner1>
+            </mat-form-field>
+            <mat-form-field fxFlex="50">
+                <mat-label>Owner 2 Name</mat-label>
+                <input matInput placeholder="Owner Two Name" #owner2>
+            </mat-form-field>
+        </section>-->
+        <section fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="30">
+                <mat-label>Address Number</mat-label>
+                <input matInput placeholder="Address Number" required #streetNum>
+            </mat-form-field>
+            <mat-form-field fxFlex="50">
+                <mat-label>Street Name</mat-label>
+                <input matInput placeholder="Street Name" required #street>
+            </mat-form-field>
+            <mat-form-field fxFlex="10">
+                <mat-label>Suffix</mat-label>
+                <input matInput placeholder="Suffix" #suffix>
+            </mat-form-field>
+        </section>
+        <section fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="30">
+                <mat-label>City</mat-label>
+                <input matInput placeholder="City" required #city>
+            </mat-form-field>
+            <mat-form-field fxFlex="30" >
+                <mat-select #county placeholder="County">
+                    <mat-option>None</mat-option>
+                    <mat-option *ngFor="let county of counties" [value]="county">{{county}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="30">    
+                <mat-label>Zip</mat-label>
+                <input matInput placeholder="Zip" required #zip>
+            </mat-form-field>
+        </section>
+        <mat-error *ngIf="displayMessage">{{userMessage}}</mat-error>
+        <button mat-raised-button color="primary" (click)="saveParcel();">Save</button>
+    </mat-dialog-content>
+    <mat-dialog-content *ngIf="!createAssetFlag" fxLayout="column" fxLayoutGap="5%">
+        <section *ngIf="badAddressFlag" fxLayout="column" fxLayoutGap="5%">
+                <mat-error fxLayoutAlign="center center">The Address looks poorly formatted.</mat-error>
+            <button mat-raised-button (click)="modifyAddress();">Modify Address</button>
+        </section>
+        <mat-progress-bar mode="indeterminate" *ngIf="loadingYelpData"></mat-progress-bar>
+        <section *ngIf="yelpDataAvailable" fxLayout="column" fxLayoutGap="5%">
+            <h2 fxLayoutAlign="center center">Do any of these institutions match your query?</h2>
+            <mat-button-toggle-group vertical>
+                <mat-button-toggle *ngFor="let candidate of yelpData" (click)="yelpValue(candidate)">{{candidate.name}}</mat-button-toggle>
+                <mat-button-toggle (click)="yelpValue(candidate)" (click)="enableManualSurvey()">Fill in Survey Manually...</mat-button-toggle>
+            </mat-button-toggle-group>
+            <button mat-raised-button color="primary" (click)="continue();">Continue</button>
+        </section>
+        <section *ngIf="yelpDataAvailable === false" fxLayout="column" fxLayoutGap="5%">
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let question of script; let i = index" [ngSwitch]="question.questionType">
+                    <mat-expansion-panel-header  class="right-aligned-header">
+                        <mat-panel-title>{{i + 1}}</mat-panel-title>
+                        <mat-panel-description>{{question.question}}</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <section *ngSwitchCase="'TEXT'">
+                        <mat-form-field fxFlex='100%'>
+                            <mat-label>{{question.question}}</mat-label>
+                            <input matInput placeholder="{{question.question}}" #textAnswers>
+                        </mat-form-field>
+                    </section>
+                        <section *ngSwitchCase="'SINGLESELECT'" fxLayout="row" fxLayoutGap="5%">
+                            <mat-form-field>
+                                <mat-label>{{question.question}}</mat-label>
+                                <mat-select #singleSelectAnswers placeholder="{{question.question}}">
+                                    <div *ngFor="let responses of question.responses">
+                                        <mat-option *ngIf="responses.hasChildren; else noChildren" (click)="singleSelected(responses)">{{responses.response}}</mat-option>
+                                        <ng-template #noChildren>
+                                            <mat-option [value]="responses.response" (click)="singleSelected()">{{responses.response}}</mat-option>
+                                        </ng-template>
+                                    </div>
+                                </mat-select>
+                            </mat-form-field>
+                            <section *ngIf="singleSelection">
+                                <mat-radio-group fxLayout="column" fxLayoutGap="5%" ngModel #radioAnswers="ngModel" name="{{question.question}}">
+                                    <mat-radio-button *ngFor="let child of singleSelection.children" value="{{singleSelection.response + ':' + child}}">{{child}}</mat-radio-button>
+                                </mat-radio-group>
+                            </section>
+                        </section>
+                       
+                        <section *ngSwitchCase="'MULTISELECTCHILDRENTIME'">
+                            <mat-form-field>
+                                <mat-label>{{question.question}}</mat-label>
+                                <mat-select multiple [ngModel]="[]" placeholder="{{question.question}}">
+                                    <div *ngFor="let responses of question.responses">
+                                        <mat-option (click)="multiSelectedTime(responses)">{{responses.response}}</mat-option>
+                                    </div>
+                                </mat-select>
+                            </mat-form-field>
+                            <section *ngFor="let responses of multiSelectionTime">
+                                {{responses.response}}
+                                <ng5-slider [value]="9" [highValue]="17" [options]="options" #time id="{{responses.response}}"></ng5-slider>
+                            </section>
+                        </section>
+                        <section *ngSwitchCase="'MULTISELECTCHILDREN'">
+                            <mat-form-field>
+                                <mat-label>{{question.question}}</mat-label>
+                                <mat-select multiple [ngModel]="[]" placeholder="{{question.question}}">
+                                    <div *ngFor="let responses of question.responses">
+                                        <mat-option (click)="multiSelected(responses)">{{responses.response}}</mat-option>
+                                    </div>
+                                </mat-select>
+                            </mat-form-field>
+                            <section *ngFor="let responses of multiSelection; let j = index" fxLayoutGap="5%" fxLayout="row" >
+                                <section *ngIf="responses.hasChildren; else noChildren">
+                                    <mat-form-field>
+                                        <mat-label>{{responses.response}}</mat-label>
+                                        <mat-select multiple [ngModel]="[]" #multiSelectAnswersWChildren placeholder="{{question.question}}">                                
+                                            <mat-option *ngFor="let child of responses.children" [value]="responses.response +':'+ child">{{child}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </section>
+                                
+                                <ng-template #noChildren>
+                                    <mat-form-field style="display: none">
+                                        <mat-label >{{responses.response}}</mat-label>
+                                        <mat-select [value]="responses.response" #multiSelectAnswersWChildren placeholder="{{question.question}}"></mat-select>
+                                    </mat-form-field>
+                                </ng-template>
+                            </section>
+                            <mat-error *ngIf="ethnicGroupError">Please complete the Ethnic Group Form.</mat-error>
+                            
+                        </section>
+                        <section *ngSwitchCase="'MULTISELECT'">
+                            <mat-form-field>
+                                <mat-label>{{question.question}}</mat-label>
+                                <mat-select multiple [ngModel]="[]" #multiSelectAnswers placeholder="{{question.question}}">
+                                    <mat-option *ngFor="let responses of question.responses" [value]="responses.response">{{responses.response}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </section>
+                        <section *ngSwitchCase="'RADIO'" >
+                            <mat-radio-group fxLayout="column" fxLayoutGap="5%" [ngModel] #radioAnswers="ngModel" name="{{question.question}}">
+                                <mat-radio-button *ngFor="let responses of question.responses" value="{{responses.response}}">{{responses.response}}</mat-radio-button>
+                            </mat-radio-group>
+                        </section>
+                </mat-expansion-panel>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header  class="right-aligned-header">
+                        <mat-panel-title>11</mat-panel-title>
+                        <mat-panel-description>General Comments</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-form-field fxFlex='100%'>
+                        <mat-label>General Comments</mat-label>
+                        <textarea matInput placeholder="General Comments" #generalComments></textarea>
+                    </mat-form-field>
+                </mat-expansion-panel>
+            </mat-accordion>
+            
+        </section>
+        <br *ngIf="!createAssetFlag && yelpDataAvailable === false"> 
+    </mat-dialog-content>
+    <mat-error *ngIf="locationNameError">This Asset needs a Location Name.</mat-error>
+    <button mat-raised-button color="primary" *ngIf="!createAssetFlag && yelpDataAvailable === false" (click)="saveAsset();">Save</button>
+    <button mat-raised-button color="accent" *ngIf="yelpDataAvailable === false"(click)="cancel();">Cancel</button>
+</div>

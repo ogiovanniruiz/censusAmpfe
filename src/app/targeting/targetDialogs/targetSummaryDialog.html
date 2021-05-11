@@ -1,0 +1,68 @@
+<h2 mat-dialog-title fxLayoutAlign="center">Target Summary</h2>
+<mat-dialog-content>
+  <!--
+  <mat-tab-group>
+    <mat-tab label="Total Targets">
+      <table matSort (matSortChange)="sortTotalTargets($event)">
+        <tr>
+          <th mat-sort-header="name">Organization Name</th>
+          <th mat-sort-header="totalNumber"> Total Number of BlockGroups</th>
+          <th mat-sort-header="hh">Total Occupied Units</th>
+        </tr>
+        <tr *ngFor="let org of sortedTotalTargets">
+          <td>{{org.org.name}}</td>
+          <td>{{org.totalTargets}}</td>
+          <td>{{org.hh}}</td>
+        </tr>
+      </table>
+    </mat-tab>
+
+    <mat-tab label="Overlapping Targets">        
+      <table matSort (matSortChange)="sortOverlappingTargets($event)">
+        <tr>
+          <th mat-sort-header="name">Block Group</th>
+          <th mat-sort-header="totalNumber"> Organizations</th>
+          <th mat-sort-header="hhNumber">Total Occupied Units</th>
+        </tr>
+        <tr *ngFor="let overlapping of sortedOverlappingTargets">
+          <td>{{overlapping.blockGroup}}</td>
+          <td>  
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{overlapping.organizations.length}} Organizations Registered</mat-panel-title>
+                <mat-panel-description></mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <p *ngFor="let organization of overlapping.organizations">{{organization}}</p>
+            
+            </mat-expansion-panel>
+          </td>
+          <td>{{overlapping.hh}}</td>
+        </tr>
+      </table>
+    </mat-tab>
+    <mat-tab label="Organization's Targets">
+    </mat-tab>
+  </mat-tab-group>-->
+
+  <mat-accordion>
+
+    <mat-expansion-panel *ngFor="let target of orgTargets">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{target.properties.targetName}}</mat-panel-title>
+        <mat-panel-description>{{target.properties.params.targetType}}</mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <mat-list>
+        <mat-list-item *ngFor="let query of target.properties.queries">
+          <mat-icon matListIcon>group</mat-icon>
+          <h3 matLine> Type: {{query.queryType}}</h3>
+          <p matLine><span>{{query.subParam}}</span></p>
+          <p matLine><span>{{query.param}}</span></p>
+          <button mat-button (click)="removeTarget(target._id)" color="warn">REMOVE</button>
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-dialog-content>
+

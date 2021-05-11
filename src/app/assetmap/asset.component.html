@@ -1,0 +1,23 @@
+<div>
+  <div fxFlex="100%">
+    <div style="height:calc(100vh - 70px)" leaflet 
+                              [leafletOptions]="options" 
+                              [leafletLayers]="layers"
+                              (leafletMapReady)="onMapReady($event)"
+                              (leafletMapMoveEnd)="mapMoved($event)"
+                              [(leafletCenter)]="center"
+                              [(leafletZoom)]="zoom"
+                              leafletDraw
+                              (leafletDrawReady)="onDrawReady($event)"
+                              [leafletDrawOptions]="drawOptions"
+                              (leafletDrawCreated)="drawCreated($event)">
+  
+      <div fxFlex="10%" fxLayoutAlign="center center" fxLayout="row" fxLayoutGap="2%"  style="z-index: 1000">
+        <mat-card fxLayoutAlign="center center" fxLayout="column" fxLayoutGap="5%"> 
+            <button mat-icon-button matTooltip="Search by Address" (click)="search()"><mat-icon>search</mat-icon></button>
+            <button mat-icon-button matTooltip="Center Map on Your Location" (click)="locateUser()"><mat-icon>gps_fixed</mat-icon></button>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

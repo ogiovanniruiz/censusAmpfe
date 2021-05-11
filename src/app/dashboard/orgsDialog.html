@@ -1,0 +1,67 @@
+<mat-dialog-content fxLayout="column" fxLayoutGap="2%">
+  <section fxLayout="column" fxLayoutGap="1%">
+    <mat-form-field fxFlex="100">
+        <mat-label>Parent Organization</mat-label>
+        <input matInput placeholder="Parent Organization" #parentOrg>
+    </mat-form-field>
+    <button (click)="updateParentOrg(parentOrg.value)" mat-button color="warn">Update Parent Org</button>
+  </section>
+<mat-accordion>
+  <mat-expansion-panel *ngIf="ready">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Approved Organizations
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-list>
+      <mat-list-item *ngFor="let org of campaignOrgs">
+        <mat-icon matListIcon>group</mat-icon>
+        <h3 matLine> {{org.name}}</h3>
+        <p matLine><span>{{org.description}}</span></p>
+        <button *ngIf="dev" (click)="removeOrg(org._id)" mat-button color="warn">REMOVE</button>
+      </mat-list-item>
+    </mat-list>
+  </mat-expansion-panel>
+  <mat-expansion-panel *ngIf="requests">
+    <mat-expansion-panel-header><mat-panel-title>Organization Requests</mat-panel-title></mat-expansion-panel-header>
+    <mat-action-list *ngIf="requests.length > 0; else noRequests">
+      <mat-list-item *ngFor="let org of requests" [matMenuTriggerFor]="menu">
+        <mat-icon matListIcon>group</mat-icon>
+        <h3 matLine> {{org.name}} </h3>
+        <p matLine><span> {{org.description}} </span></p>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="manageRequest(org._id, 'APPROVE')">
+              <mat-icon>done</mat-icon>
+              <span>Approve</span></button>
+            <button mat-menu-item (click)="manageRequest(org._id, 'DENY')">          
+              <mat-icon>block</mat-icon>
+              <span>Deny</span>
+            </button>
+        </mat-menu>
+      </mat-list-item>
+    </mat-action-list>
+    <ng-template #noRequests><mat-error fxLayoutAlign="center">There are no requests.</mat-error></ng-template>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header><mat-panel-title>Organization Users</mat-panel-title></mat-expansion-panel-header>
+    <mat-progress-bar mode="indeterminate" *ngIf="loadingMembers"></mat-progress-bar>
+    <mat-action-list *ngIf="orgMembers.length > 0">
+      <mat-list-item *ngFor="let member of orgMembers" [matMenuTriggerFor]="menu">
+        <mat-icon matListIcon>group</mat-icon>
+        <h3 matLine> {{member.firstName}} {{member.lastName}}</h3>
+        <p matLine><span *ngIf="member.user.dataManager.includes(campaignID)"> Data Manager </span></p>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="updateDataManager(member)">
+              <mat-icon>done</mat-icon>
+              <span>Data Manager Toggle</span>
+            </button>
+        </mat-menu>
+      </mat-list-item>
+    </mat-action-list>
+  </mat-expansion-panel>
+</mat-accordion>
+<br>
+<button fxLayoutAlign="center" (click)="openScriptEditor()" mat-raised-button >Script Editor</button>
+<br>
+</mat-dialog-content>
+

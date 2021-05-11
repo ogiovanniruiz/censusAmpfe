@@ -1,0 +1,79 @@
+<div id="progress-bar" *ngIf="!dataLoaded">
+    <mat-progress-bar mode="indeterminate" *ngIf="!dataLoaded"></mat-progress-bar>
+    <p fxLayoutAlign="center">Loading Organization Dashboard...</p>
+</div>
+<h1 fxLayoutAlign="center" *ngIf="dataLoaded">{{orgName}}'s Dashboard</h1>
+<br>
+<mat-grid-list #grid rowHeight="2:1" >
+    <mat-grid-tile *ngFor="let campaign of campaigns;">
+      <mat-card fxFlex=80% *ngIf="dataLoaded">
+          <button mat-icon-button width="40" height="40" style="float: right;">
+              <img width="40" height="40" alt="campaign" src="../assets/campaign.png">
+          </button>
+          <div>
+            <h1>{{campaign.name}}</h1>
+            <h4>ID: {{campaign.campaignID}}</h4>
+            <h4>{{campaign.description}}</h4>
+          </div>
+          <br>
+          <button mat-raised-button color="primary" (click)="enterCampaign(campaign.campaignID)">ENTER</button>
+      </mat-card>
+      <br>
+      <br>
+    </mat-grid-tile>
+    <mat-grid-tile *ngIf="orgLevel === 'ADMINISTRATOR' && dataLoaded">
+        <mat-card fxFlex=80%>
+            <button mat-icon-button width="40" height="40" style="float: right;">
+                <img width="40" height="40" alt="campaign" src="../assets/members.jpg">
+            </button>
+            <div>
+              <h1>{{orgName}}'s Contact List</h1>
+              <h4>A place to manage Membership, tags and uploaded lists.</h4>
+            </div>
+            <br>
+            <button mat-raised-button color="primary" (click)="openMembership()">ENTER</button>
+        </mat-card>
+        <br>
+        <br>
+    </mat-grid-tile>
+    <mat-grid-tile *ngIf="orgLevel === 'ADMINISTRATOR' && dataLoaded">
+        <mat-card fxFlex=80%>
+                <button mat-icon-button width="40" height="40" style="float: right;">
+                    <img width="40" height="40" alt="campaign" src="../assets/wrench.png">
+                </button>
+                <div>
+                  <h1>{{orgName}}'s Settings</h1>
+                  <h4>A place to manage Organization's Phone Numbers and more.</h4>
+                </div>
+                <br>
+                <button mat-raised-button color="primary" (click)="openDetails()">ENTER</button>
+        </mat-card>
+
+    </mat-grid-tile>
+</mat-grid-list>
+
+<footer fxLayoutGap="10%" *ngIf="dataLoaded"> 
+    <section fxLayoutAlign="end">
+        <button  mat-fab [matMenuTriggerFor]="menu" *ngIf="userProfile.user.dev || orgLevel === 'ADMINISTRATOR'"><mat-icon>add</mat-icon></button> 
+        <mat-menu #menu="matMenu">
+            <div>
+                <button mat-menu-item *ngIf="userProfile.user.dev" (click)="openJoinCreateCampaignDialog('CREATE')">
+                    <mat-icon>create</mat-icon>
+                    <span>Create Campaign</span>
+                </button>
+            </div>
+            <div>
+                <button mat-menu-item (click)="openJoinCreateCampaignDialog('REQUEST')">
+                    <mat-icon>add</mat-icon>
+                    <span>Request Campaign</span>
+                </button>
+            </div>
+        </mat-menu>
+    </section>
+    <section fxLayoutAlign="center center" fxLayoutGap="10%">
+        <mat-card fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="5%">
+            <p fxLayoutAlign="center">Welcome {{userProfile.firstName}} {{userProfile.lastName}}</p>
+            <p fxLayoutAlign="center">Email: {{userProfile.user.loginEmail}}</p>
+        </mat-card>
+    </section> 
+</footer> 

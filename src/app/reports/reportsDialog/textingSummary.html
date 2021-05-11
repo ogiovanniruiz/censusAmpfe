@@ -1,0 +1,27 @@
+<mat-spinner *ngIf="!sortedReports"></mat-spinner>
+<h2 mat-dialog-title fxLayoutAlign="center" *ngIf="sortedReports">Texting Summary</h2>
+<mat-progress-bar fxFlexAlign="center" *ngIf="dataLoaded" mode="determinate" [value]="dataLoadedValue"></mat-progress-bar>
+<mat-dialog-content *ngIf="sortedReports">
+    <mat-paginator #paginator [pageSize]="pageSize" [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)"></mat-paginator>
+    <table matSort (matSortChange)="sortData($event)">
+        <tr>
+            <th mat-sort-header="org">Organization</th>
+            <th mat-sort-header="identified">Identified</th>
+            <th mat-sort-header="refused">Refused</th>
+            <th mat-sort-header="impressions">Impressions</th>
+            <th mat-sort-header="total">Total</th>
+        </tr>
+
+        <tr *ngFor="let report of sortedReports">
+            <td>{{report.org}}</td>
+            <td>{{report.identified}}</td>
+            <td>{{report.refuses}}</td>
+            <td>{{report.impressions}}</td>
+            <td>{{report.total}}</td>
+            <mat-divider></mat-divider>
+        </tr>
+    </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="accent" (click)="closeSettings();">CLOSE</button>
+</mat-dialog-actions>

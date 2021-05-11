@@ -1,0 +1,73 @@
+<section fxLayout="column" fxLayoutGap="1%">
+    <h1 fxLayoutAlign="center center">Event Report Form</h1>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>Prefilled Event Data</mat-panel-title>
+                <mat-panel-description>Prefilled Event Data</mat-panel-description>
+            </mat-expansion-panel-header>
+            <p>Reporter Name: {{userName}}</p>
+            <p>CBO Name: {{cboName}}</p>
+            <p>Parent Organization: {{parentOrg}}</p>
+            <p>Activity Date: {{dateStart}}</p>
+            <p>Latitude: {{lat}} Longitude: {{lng}}</p> 
+            <p>Address 1: {{address}} {{address2}}</p>        
+            <p>Start Time: {{startTime}} End Time: {{endTime}}</p> 
+            <p>Event Name: {{eventName}}</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Activity Details</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>What went well?: {{whatWentWell}}</p>
+            <p>What could be improved: {{improve}}</p>
+            <p>Audience Questions and Concerns: {{concerns}}</p>
+            <p>Number of paid staff/volunteers: {{numVolunteers}}</p>
+            <p>Activity Type: {{selectedActivityType}}</p>
+            <p>Additional Notes: {{notes}}</p>
+            <p>Description: {{description}}</p>
+            <p>Total Number of Impressions: {{impressions}}</p>
+            <p>Impression Confidence: {{impressConf}}</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Languages</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>languages:</p>
+            <div style="padding-left: 10px" *ngFor="let language of loadedLanguages"><p>{{language}}</p></div>
+            <p>Language Breakdown Confidence: {{langBreakConf}}</p>
+            <p>Other Language Info: {{otherLangInfo}}</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>HTC Groups</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>HTC Groups:</p>
+            <div style="padding-left: 10px" *ngFor="let group of loadedHTCGroups"><p>{{group}}</p></div>
+            <p>Total Number of HTC Impressions: {{numHTCImpress}}</p>
+            <p>HTC Data Confidence: {{htcDataConf}}</p>
+            <p># HTC Confidence: {{htcConf}}</p>
+            <p>HTC Breakdown Methodology: {{htcMethod}}</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Extra Details</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>Funding Source: {{funding}}</p>
+            <p>Activity Website: {{website}}</p>
+            <p>Facebook Link: {{facebook}}</p>
+            <p>Venue Rating: {{venueRating}}</p>
+            <p>Participant Engagement: {{participEngage}}</p>
+            <p>Volunteer Hours: {{volunteerHours}}</p>
+            <p>Youtube Link: {{youtube}}</p>
+            <p>Social Media Channel: {{socialMedia}}</p>
+            <p>Interaction Quality: {{interactQuality}}</p>
+            <p>Overall Effectiveness: {{effectiveness}}</p>
+        </mat-expansion-panel>
+    </mat-accordion>
+    <button mat-raised-button color="accent" (click)="closeDialog()">Close</button>
+</section>

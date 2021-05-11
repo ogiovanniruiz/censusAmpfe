@@ -1,0 +1,45 @@
+<br>
+<h1 fxLayoutAlign="center">Reports Activities</h1>
+<br>
+<mat-grid-list #grid cols="4" rowHeight="2:1">
+    <mat-grid-tile *ngFor="let dialogName of reportDialogName">
+        <mat-card fxFlex=80%>
+            <button mat-icon-button width="40" height="40" style="float: right;">
+                <img width="40" height="40" alt="campaign" src="../assets/campaign.png">
+            </button>
+            <div>
+                <h1>{{dialogName}}</h1>
+            </div>
+            <br>
+            <div fxLayout="row inline" fxLayoutGap="10%" fxLayoutGap.lg="10%" fxLayoutGap.md="10%" fxLayoutGap.sm="10%">
+                <div>
+                    <button mat-raised-button color="primary" (click)="openReportsDialog(dialogName)">ENTER</button>
+                </div>
+                <div *ngIf="dialogName === 'Phonebanking Summary By User'">
+                    <mat-form-field style="width:140px; margin-top:-10px;">
+                        <input matInput [matDatepicker]="phonebankPicker" placeholder="Choose a date" disabled>
+                        <mat-datepicker-toggle matSuffix [for]="phonebankPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #phonebankPicker disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div *ngIf="dialogName === 'Event Summary'">
+                    <mat-form-field style="width:140px; margin-top:-10px;">
+                        <input matInput [matDatepicker]="eventsPickerStart" placeholder="Start date" disabled>
+                        <mat-datepicker-toggle matSuffix [for]="eventsPickerStart"></mat-datepicker-toggle>
+                        <mat-datepicker #eventsPickerStart disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field style="width:140px; margin-top:-10px;">
+                        <input matInput [matDatepicker]="eventsPickerEnd" placeholder="End date" disabled>
+                        <mat-datepicker-toggle matSuffix [for]="eventsPickerEnd"></mat-datepicker-toggle>
+                        <mat-datepicker #eventsPickerEnd disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="dialogName === 'Phonebanking Summary By User'" fxLayout="row inline" fxLayoutGap="10%" fxLayoutGap.lg="10%" fxLayoutGap.md="10%" fxLayoutGap.sm="10%" style="font-size: 14px">
+                Choose date or leave blank to view all.
+            </div>
+        </mat-card>
+        <br>
+        <br>
+    </mat-grid-tile>
+</mat-grid-list>

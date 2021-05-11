@@ -1,0 +1,15 @@
+<mat-dialog-content fxLayout="column" fxLayoutGap="5%">
+    <h1 fxLayoutAlign="center">Search for a Parcel</h1>
+
+    <section fxLayout="row" fxLayoutGap="5%">
+        <mat-form-field fxFlex="100">
+            <mat-label>Address</mat-label>
+            <input matInput placeholder="Address" #address>
+        </mat-form-field>
+    </section>
+    <button mat-raised-button color="primary" (click)="search();">SEARCH</button>
+
+    <mat-error *ngIf="displayMessage">{{userMessage}}</mat-error>
+    <mat-error *ngIf="displaySecondMessage">{{secondaryMessage}}</mat-error>
+    <mat-progress-bar *ngIf="searching" mode="indeterminate"></mat-progress-bar>
+</mat-dialog-content>

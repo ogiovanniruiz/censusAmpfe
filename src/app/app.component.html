@@ -1,0 +1,52 @@
+<div class="{{theme}}">
+<mat-toolbar color="primary" >
+    <button mat-icon-button (click)="sidenav.toggle()" *ngIf ="(this.router.url != '/' && this.router.url != '/register' && this.router.url.split('?')[0] != '/passwordreset')"><mat-icon>menu</mat-icon></button>
+    <button mat-icon-button (click)="back();" *ngIf ="(this.router.url != '/' && this.router.url != '/register' && this.router.url.split('?')[0] != '/passwordreset' && this.router.url != '/organizations'&& this.router.url != '/login')"><mat-icon>arrow_back</mat-icon></button>
+</mat-toolbar>
+<mat-sidenav-container style="height: calc(100vh - 64px)" >
+    <mat-sidenav #sidenav mode="over" closed>
+        <mat-toolbar><mat-toolbar-row><img width="100" height="30" alt="censusIE Logo" src="{{logo_dir}}"></mat-toolbar-row></mat-toolbar>
+        <div fxLayoutGap="5%" fxLayout="column" fxLayout.xs="column" fxLayoutWrap fxLayoutAlign="center">
+            <button mat-button color="primary" (click)="goToHome(); sidenav.toggle();" *ngIf ="(this.router.url != '/' && this.router.url != '/register' && this.router.url.split('?')[0] != '/passwordreset' && this.router.url != '/organizations')"><mat-icon>home</mat-icon>Home</button>
+            <button mat-button color="primary" (click)="goToCampaigns(); sidenav.toggle();" *ngIf ="(this.router.url != '/' && this.router.url != '/register' && this.router.url.split('?')[0] != '/passwordreset'  && this.router.url != '/organizations'  && this.router.url != '/home' && this.router.url != '/asset')"><mat-icon>flag</mat-icon>Campaigns</button>
+            <button mat-button color="primary" (click)="openDevSettingsDialog()" *ngIf="isDev"><mat-icon>settings</mat-icon>Developer Tools</button>
+            <button mat-button color="primary" (click)="openContactDialog()"><mat-icon>announcement</mat-icon>Contact Us</button>
+            <!--<button mat-button color="primary" (click)="openUserProfileDialog()"><mat-icon>build</mat-icon>User Profile</button>-->
+            <mat-divider></mat-divider>
+
+            <button mat-button color="accent" (click)="logOff()" (click)="sidenav.close()"><mat-icon>arrow_back</mat-icon> Logout</button>
+        </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <router-outlet></router-outlet>
+        <div *ngIf = "this.router.url === '/'"
+              style="margin-top: 5%" fxLayout.xs="column" fxLayout="row" fxLayoutWrap fxLayoutAlign="center" fxLayoutGap="5%">
+            <mat-card fxLayoutGap="5%" fxLayout="column" fxFlex="40" fxFlex.sm="60">
+                <span fxLayoutAlign="center">
+                    <img width="360" height="119" alt="censusIE Logo" src="{{logo_dir}}">
+                </span>
+                <p  fxLayoutAlign="center">Amplify v {{version}}</p>
+                <mat-progress-bar *ngIf="checkingVersion" mode="indeterminate"></mat-progress-bar>
+                <mat-error fxLayoutAlign="center" *ngIf="!synced && !checkingVersion">Amplify version is out of sync. Latest version is: {{serverVersion}} </mat-error>
+                <mat-error fxLayoutAlign="center" *ngIf="!synced  && !checkingVersion">Please refresh your page or clear browsing history.</mat-error>
+
+                <mat-form-field> 
+                    <input matInput type="email" placeholder="Email" #email [formControl]="emailFormControl" [errorStateMatcher]="matcher" required>
+                </mat-form-field>
+                <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                    Please enter a valid email address
+                </mat-error>
+                <mat-form-field > 
+                    <input matInput type="password" placeholder="Password" #password required [errorStateMatcher]="matcher">
+                </mat-form-field>
+                <button mat-raised-button color="primary" (click)="localLogin()">LOGIN</button>
+                <button mat-raised-button color="accent" (click)="googleLogin()">GOOGLE LOGIN</button>
+                <button mat-button color="accent" (click)="localRegister()">REGISTER</button>
+                <button mat-button color="accent" (click)="localForgotPassword()">FORGOT PASSWORD?</button>
+                <mat-error *ngIf="displayMessage">{{userMessage}}</mat-error>
+              
+            </mat-card>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+</div>
